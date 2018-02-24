@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  revision = "a0583e0143b1624142adab07e0e97fe106d99561"
+  version = "v1.3"
+
+[[projects]]
+  name = "github.com/mattes/migrate"
+  packages = [".","database","database/mysql","source","source/file"]
+  revision = "035c07716cd373d88456ec4d701402df52584cb4"
+  version = "v3.0.1"
+
+[[projects]]
   branch = "master"
   name = "github.com/neelance/graphql-go"
   packages = [".","errors","internal/common","internal/exec","internal/exec/packer","internal/exec/resolvable","internal/exec/selected","internal/query","internal/schema","internal/validation","introspection","log","trace"]
@@ -22,6 +34,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4c848faf04b3a9f2f705a78515c2c9de6c024f67201a2d1b2512f03de4963176"
+  inputs-digest = "f7a6aa776dcb20867270c22442230290506e0681dec148bbe793d3aace094b60"
   solver-name = "gps-cdcl"
   solver-version = 1

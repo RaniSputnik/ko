@@ -1,15 +1,23 @@
 package resolve
 
-import graphql "github.com/neelance/graphql-go"
+import (
+	"context"
+
+	"github.com/RaniSputnik/ko/svc"
+	graphql "github.com/neelance/graphql-go"
+)
+
+type Data struct {
+	svc.MatchSvc
+}
 
 type Resolver interface{}
 
-func Root() Resolver {
-	return &rootResolver{}
+func Root(data Data) Resolver {
+	return &rootResolver{data}
 }
 
-type rootResolver struct {
-}
+type rootResolver struct{ Data }
 
 // Queries
 
@@ -23,8 +31,9 @@ func (r *rootResolver) Lobby() (*lobbyResolver, error) {
 
 // Mutations
 
-func (r *rootResolver) CreateMatch() (*matchResolver, error) {
-	return nil, ErrNotImplemented
+func (r *rootResolver) CreateMatch(ctx context.Context) (*matchResolver, error) {
+	match, err := r.Data.MatchSvc.CreateMatch(ctx)
+	return &matchResolver{match}, err
 }
 
 type matchArgs struct {

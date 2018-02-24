@@ -1,6 +1,9 @@
 package resolve
 
-import graphql "github.com/neelance/graphql-go"
+import (
+	"github.com/RaniSputnik/ko/svc"
+	graphql "github.com/neelance/graphql-go"
+)
 
 type matchConnectionResolver struct{}
 
@@ -12,10 +15,12 @@ func (r *matchConnectionResolver) TotalCount() int32 {
 	return 0
 }
 
-type matchResolver struct{}
+type matchResolver struct {
+	svc.Match
+}
 
-func (r *matchResolver) ID() (graphql.ID, error) {
-	return graphql.ID(""), ErrNotImplemented
+func (r *matchResolver) ID() graphql.ID {
+	return graphql.ID(r.Match.ID)
 }
 
 func (r *matchResolver) CreatedBy() (*playerResolver, error) {
