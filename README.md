@@ -7,7 +7,7 @@ A small GraphQL API used to create and play games of Go.
 1. Start mysql;
 
 ```
-docker run --name ko-mysql \
+$ docker run --name ko-mysql \
     -p 3306:3306 \
     -e MYSQL_ROOT_PASSWORD=example \
     -e MYSQL_DATABASE=ko \
@@ -17,7 +17,7 @@ docker run --name ko-mysql \
 2. Run the app
 
 ```
-go run main.go
+$ go run main.go
 ```
 
 ### Run with Docker
@@ -25,6 +25,16 @@ go run main.go
 TODO link mysql
 
 ```
-docker build -t ko-app .
-docker run -it -p 8080:8080 --rm ko-app
+$ docker build -t ko-app .
+$ docker run -it -p 8080:8080 --rm ko-app
+```
+
+### Run feature tests
+
+TODO Dockerise
+
+```
+$ gem install cucumber
+$ gem install rspec-expectations
+$ cucumber
 ```

@@ -20,7 +20,7 @@ type matchResolver struct {
 }
 
 func (r *matchResolver) ID() graphql.ID {
-	return graphql.ID(r.Match.ID)
+	return EncodeID(matchID, r.Match.ID)
 }
 
 func (r *matchResolver) CreatedBy() (*playerResolver, error) {
