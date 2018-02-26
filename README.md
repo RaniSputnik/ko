@@ -31,7 +31,15 @@ $ docker run -it -p 8080:8080 --rm ko-app
 
 ### Run feature tests
 
-TODO Dockerise
+Run with Docker;
+
+```
+$ cd ./features
+$ docker build -t ko-tests .
+$ docker run --rm -t ko-tests
+```
+
+Run without Docker;
 
 ```
 $ gem install cucumber
