@@ -36,7 +36,7 @@ func (r *matchResolver) Next() (*playerResolver, error) {
 }
 
 func (r *matchResolver) Board() (*boardResolver, error) {
-	return nil, ErrNotImplemented
+	return &boardResolver{r.Match}, nil
 }
 
 func (r *matchResolver) Events() (*eventsConnectionResolver, error) {

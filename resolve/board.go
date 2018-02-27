@@ -1,9 +1,13 @@
 package resolve
 
-type boardResolver struct{}
+import "github.com/RaniSputnik/ko/svc"
+
+type boardResolver struct {
+	svc.Match
+}
 
 func (r *boardResolver) Size() (int32, error) {
-	return 0, ErrNotImplemented
+	return int32(r.Match.BoardSize), nil
 }
 
 func (r *boardResolver) Stones() ([]*stoneResolver, error) {

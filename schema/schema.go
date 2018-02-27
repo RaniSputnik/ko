@@ -15,7 +15,7 @@ type Query {
 }
 
 type Mutation {
-	createMatch: Match!
+	createMatch(boardSize:Int = 19): Match!
 	joinMatch(matchId: ID!): Match!
 
 	playStone(matchId: ID!, x: Int!, y:Int!): Match!
@@ -41,7 +41,7 @@ type MatchConnection {
 
 type Match {
 	id: ID!
-	
+
 	# The player who created this match.
 	createdBy: Player!
 	# Gets a player by stone colour.

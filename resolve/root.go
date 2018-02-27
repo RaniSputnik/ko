@@ -31,8 +31,11 @@ func (r *rootResolver) Lobby() (*lobbyResolver, error) {
 
 // Mutations
 
-func (r *rootResolver) CreateMatch(ctx context.Context) (*matchResolver, error) {
-	match, err := r.Data.MatchSvc.CreateMatch(ctx)
+func (r *rootResolver) CreateMatch(ctx context.Context, args struct{ BoardSize int32 }) (*matchResolver, error) {
+	if args.BoardSize == 0 {
+		args.BoardSize = svc.BoardSizeNormal
+	}
+	match, err := r.Data.MatchSvc.CreateMatch(ctx, int(args.BoardSize))
 	return &matchResolver{match}, err
 }
 
