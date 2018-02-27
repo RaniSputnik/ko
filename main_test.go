@@ -9,7 +9,7 @@ import (
 )
 
 func TestParseSchema(t *testing.T) {
-	if _, err := graphql.ParseSchema(schema.Text, resolve.Root()); err != nil {
+	if _, err := graphql.ParseSchema(schema.Text, resolve.Root(resolve.Data{})); err != nil {
 		t.Error(err)
 	}
 }
