@@ -1,4 +1,4 @@
-Feature: Create match
+Feature: Matches
 
 Scenario: Alice creates a match
 Given Alice is logged in
@@ -12,3 +12,9 @@ When she creates a new match without specifying board size
 Then Alice should get a new match
 And the board should be 19x19
 And there should be no errors
+
+Scenario: Alice gets matches
+Given Alice is logged in
+And she has created 2 matches
+When Alice requests her matches
+Then she should get her 2 matches

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -58,21 +57,12 @@ func openDB(host, user, pwd string) *sql.DB {
 		log.Printf("Connecting to DB...")
 		db, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/ko", user, pwd, host))
 		if err == nil {
-			break
+			return db
 		}
 		log.Printf("Failed to connect to DB, retrying in %s", delayDuration)
 		<-time.After(delayDuration)
 	}
-	must(err)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
-
-	_, err = db.Conn(ctx)
-	must(err)
-
-	log.Printf("Connected to DB!")
-	return db
+	panic(err)
 }
 
 func runMigrations(db *sql.DB) {

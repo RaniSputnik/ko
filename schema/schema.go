@@ -24,7 +24,6 @@ type Mutation {
 }
 
 type Player {
-	id: ID!
 	username: String!
 	colour: Colour!
 }

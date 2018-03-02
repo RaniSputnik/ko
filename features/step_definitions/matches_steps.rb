@@ -2,6 +2,10 @@ Given(/^Alice is logged in$/) do
     #set_user "Alice"
 end
 
+Given("she has created {int} matches") do |int|
+    pending # Write code here that turns the phrase above into concrete actions
+end
+
 When(/^(?:she|he) creates a new match$/) do
     @response = make_request("mutation { createMatch { id }}")
     @response_body = JSON.parse(@response.body)
@@ -9,6 +13,11 @@ end
 
 When(/^(?:she|he) creates a new match without specifying board size$/) do
     @response = make_request("mutation { createMatch { id, board { size }}}")
+    @response_body = JSON.parse(@response.body)
+end
+
+When("Alice requests her matches") do
+    @response = make_request("query { matches { nodes { id }}}")
     @response_body = JSON.parse(@response.body)
 end
 
@@ -33,4 +42,8 @@ Then("the board should be {int}x{int}") do |sizex, sizey|
     # Boards must be square
     expect(gotBoardSize).to eq(sizex)
     expect(gotBoardSize).to eq(sizey)
+end
+
+Then("she should get her {int} matches") do |int|
+    pending # Write code here that turns the phrase above into concrete actions
 end
