@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mattes/migrate"
@@ -19,7 +22,10 @@ import (
 )
 
 func main() {
-	host, user, pwd := "localhost", "root", "example"
+	host := environmentVariableOrDefault("KO_SQL_HOST", "localhost")
+	user := environmentVariableOrDefault("KO_SQL_USER", "root")
+	pwd := environmentVariableOrDefault("KO_SQL_PWD", "example")
+
 	db := openDB(host, user, pwd)
 	// TODO run migrations should not happen on app startup
 	// should be an offline action
@@ -35,9 +41,37 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
+func environmentVariableOrDefault(name, def string) string {
+	if val := os.Getenv(name); val != "" {
+		return val
+	}
+	return def
+}
+
 func openDB(host, user, pwd string) *sql.DB {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/ko", user, pwd, host))
+	var db *sql.DB
+	var err error
+
+	maxRetries := 3
+	delayDuration := time.Second * 1
+	for i := 0; i < maxRetries; i++ {
+		log.Printf("Connecting to DB...")
+		db, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/ko", user, pwd, host))
+		if err == nil {
+			break
+		}
+		log.Printf("Failed to connect to DB, retrying in %s", delayDuration)
+		<-time.After(delayDuration)
+	}
 	must(err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+
+	_, err = db.Conn(ctx)
+	must(err)
+
+	log.Printf("Connected to DB!")
 	return db
 }
 
