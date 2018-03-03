@@ -37,5 +37,39 @@ func (svc MatchSvc) CreateMatch(ctx context.Context, boardSize int) (Match, erro
 	if err != nil {
 		return Match{}, err
 	}
-	return Match{ID: strconv.FormatInt(id, 10), BoardSize: boardSize}, nil
+	return Match{ID: intToID(id), BoardSize: boardSize}, nil
+}
+
+const getMatchesQuery = `SELECT MatchID, Owner, BoardSize FROM Matches`
+
+func (svc MatchSvc) GetMatches(ctx context.Context) ([]Match, error) {
+	results := []Match{}
+	rows, err := svc.DB.QueryContext(ctx, getMatchesQuery)
+	if err != nil {
+		return results, err
+	}
+	for rows.Next() {
+		var (
+			matchID   int64
+			owner     int64
+			boardSize int
+		)
+
+		if err := rows.Scan(&matchID, &owner, &boardSize); err != nil {
+			return results, err
+		}
+		results = append(results, Match{
+			ID:        intToID(matchID),
+			Owner:     intToID(owner),
+			BoardSize: boardSize,
+		})
+	}
+	if err := rows.Err(); err != nil {
+		return results, err
+	}
+	return results, nil
+}
+
+func intToID(id int64) string {
+	return strconv.FormatInt(id, 10)
 }

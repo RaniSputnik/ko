@@ -5,14 +5,16 @@ import (
 	graphql "github.com/neelance/graphql-go"
 )
 
-type matchConnectionResolver struct{}
-
-func (r *matchConnectionResolver) Nodes() ([]*matchResolver, error) {
-	return nil, ErrNotImplemented
+type matchConnectionResolver struct {
+	resolvers []*matchResolver
 }
 
-func (r *matchConnectionResolver) TotalCount() int32 {
-	return 0
+func (r *matchConnectionResolver) Nodes() []*matchResolver {
+	return r.resolvers
+}
+
+func (r *matchConnectionResolver) TotalCount() (int32, error) {
+	return 0, ErrNotImplemented
 }
 
 type matchResolver struct {

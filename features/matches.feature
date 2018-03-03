@@ -18,3 +18,4 @@ Given Alice is logged in
 And she has created 2 matches
 When Alice requests her matches
 Then she should get her 2 matches
+And there should be no errors

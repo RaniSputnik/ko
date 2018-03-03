@@ -14,5 +14,5 @@ $mysql_client = Mysql2::Client.new(
 )
 
 def clear_db()
-    puts "TODO clear DB"
+    $mysql_client.query("DELETE FROM Matches")
 end

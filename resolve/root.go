@@ -21,8 +21,17 @@ type rootResolver struct{ Data }
 
 // Queries
 
-func (r *rootResolver) Matches(args pagingArgs) (*matchConnectionResolver, error) {
-	return nil, ErrNotImplemented
+func (r *rootResolver) Matches(ctx context.Context, args pagingArgs) (*matchConnectionResolver, error) {
+	matches, err := r.Data.MatchSvc.GetMatches(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resolvers := make([]*matchResolver, len(matches))
+	for i, m := range matches {
+		resolvers[i] = &matchResolver{m}
+	}
+	return &matchConnectionResolver{resolvers}, nil
 }
 
 func (r *rootResolver) Lobby() (*lobbyResolver, error) {
