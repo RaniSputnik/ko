@@ -2,8 +2,11 @@ Given(/^Alice is logged in$/) do
     #set_user "Alice"
 end
 
-Given("she has created {int} matches") do |int|
-    pending # Write code here that turns the phrase above into concrete actions
+Given("she has created {int} matches") do |n_matches|
+    for i in 1..n_matches do
+        puts "Create a match"
+        $mysql_client.query("INSERT INTO Matches (Owner, BoardSize) VALUES (#{$Alice.id},#{19})")
+    end
 end
 
 When(/^(?:she|he) creates a new match$/) do
