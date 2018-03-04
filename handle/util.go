@@ -17,6 +17,15 @@ func badRequest(w http.ResponseWriter, err error) {
 	})
 }
 
+var unauthorizedError = resError{
+	Type:    "Unauthorized",
+	Message: "You must be authenticated to make API requests.",
+}
+
+func unauthorized(w http.ResponseWriter) {
+	send(w, http.StatusUnauthorized, unauthorizedError)
+}
+
 func ok(w http.ResponseWriter, v interface{}) {
 	send(w, http.StatusOK, v)
 }

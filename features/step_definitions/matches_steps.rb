@@ -1,10 +1,12 @@
-Given(/^Alice is logged in$/) do
-    #set_user "Alice"
+Given("{word} is logged in") do |user_name|
+    login_user(user_name)
 end
 
-Given("she has created {int} matches") do |n_matches|
+# TODO define custom parameter type 'user'
+Given("{word} has created {int} match(es)") do |user_name, n_matches|
+    user = get_user(user_name)
     for i in 1..n_matches do
-        $mysql_client.query("INSERT INTO Matches (Owner, BoardSize) VALUES (#{$Alice.id},#{19})")
+        $mysql_client.query("INSERT INTO Matches (Owner, BoardSize) VALUES (#{user.id},#{19})")
     end
 end
 
@@ -42,7 +44,7 @@ Then("the board should be {int}x{int}") do |sizex, sizey|
     expect(got_board_size).to eq(sizey)
 end
 
-Then("she should get her {int} matches") do |expected_number_of_matches|
+Then("she should get her {int} match(es)") do |expected_number_of_matches|
     match_nodes = @response_body.dig "data", "matches", "nodes"
 
     expect(match_nodes.length).to eq(expected_number_of_matches)

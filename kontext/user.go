@@ -1,4 +1,4 @@
-package context
+package kontext
 
 type User struct {
 	ID       string

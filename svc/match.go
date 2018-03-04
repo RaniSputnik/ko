@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"strconv"
 
-	c "github.com/RaniSputnik/ko/context"
+	"github.com/RaniSputnik/ko/kontext"
 )
 
 const (
@@ -28,8 +28,8 @@ type Match struct {
 const createMatchQuery = `INSERT INTO Matches (Owner, BoardSize) VALUES (?,?)`
 
 func (svc MatchSvc) CreateMatch(ctx context.Context, boardSize int) (Match, error) {
-	userID := c.GetUser(ctx)
-	rows, err := svc.DB.ExecContext(ctx, createMatchQuery, userID.ID, boardSize)
+	user := kontext.GetUser(ctx)
+	rows, err := svc.DB.ExecContext(ctx, createMatchQuery, user.ID, boardSize)
 	if err != nil {
 		return Match{}, err
 	}
@@ -40,11 +40,12 @@ func (svc MatchSvc) CreateMatch(ctx context.Context, boardSize int) (Match, erro
 	return Match{ID: intToID(id), BoardSize: boardSize}, nil
 }
 
-const getMatchesQuery = `SELECT MatchID, Owner, BoardSize FROM Matches`
+const getMatchesQuery = `SELECT MatchID, Owner, BoardSize FROM Matches WHERE Owner = ?`
 
 func (svc MatchSvc) GetMatches(ctx context.Context) ([]Match, error) {
+	user := kontext.GetUser(ctx)
 	results := []Match{}
-	rows, err := svc.DB.QueryContext(ctx, getMatchesQuery)
+	rows, err := svc.DB.QueryContext(ctx, getMatchesQuery, user.ID)
 	if err != nil {
 		return results, err
 	}

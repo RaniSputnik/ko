@@ -1,6 +1,7 @@
 package resolve
 
 import (
+	"github.com/RaniSputnik/ko/model"
 	"github.com/RaniSputnik/ko/svc"
 	graphql "github.com/neelance/graphql-go"
 )
@@ -22,7 +23,7 @@ type matchResolver struct {
 }
 
 func (r *matchResolver) ID() graphql.ID {
-	return EncodeID(matchID, r.Match.ID)
+	return graphql.ID(model.EncodeID(model.KindMatch, r.Match.ID))
 }
 
 func (r *matchResolver) CreatedBy() (*playerResolver, error) {

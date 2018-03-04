@@ -34,15 +34,12 @@ $ docker run -it -p 8080:8080 --rm ko-app
 Run with Docker;
 
 ```
-$ cd ./features
-$ docker build -t ko-tests .
-$ docker run --rm -t ko-tests
+$ ./features/run.sh
 ```
 
-Run without Docker;
+Run without Docker (requires mysql to be installed with eg. `brew install mysql`);
 
 ```
-$ gem install cucumber
-$ gem install rspec-expectations
+$ pushd ./features; bundle install; popd
 $ cucumber
 ```

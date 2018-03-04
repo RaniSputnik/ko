@@ -19,3 +19,10 @@ And she has created 2 matches
 When Alice requests her matches
 Then she should get her 2 matches
 And there should be no errors
+
+Scenario: Alice does not see Bob's matches
+Given Alice is logged in
+And she has created 1 match
+And Bob has created 3 matches
+When Alice requests her matches
+Then she should get her 1 match

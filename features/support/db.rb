@@ -1,3 +1,5 @@
+require "mysql2"
+
 mysql_host = ENV.fetch("KO_SQL_HOST", "localhost")
 mysql_port = ENV.fetch("KO_SQL_PORT", "3306")
 mysql_db   = ENV.fetch("KO_SQL_DB", "ko")

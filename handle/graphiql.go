@@ -105,10 +105,12 @@ var graphiqlPage = template.Must(template.New("graphiql").Parse(`<!--
       function graphQLFetcher(graphQLParams) {
         // This example expects a GraphQL server at the path /graphql.
         // Change this to point wherever you host your GraphQL server.
+        var TODO_TOKEN = 'eyJhbGciOiJub25lIn0.eyJzdWIiOiJWWE5sY2pveCJ9.'
         return fetch('{{.endpoint}}', {
           method: 'post',
           headers: {
             'Accept': 'application/json',
+            'Authorization': 'Bearer ' + TODO_TOKEN,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(graphQLParams),
