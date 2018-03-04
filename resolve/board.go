@@ -1,9 +1,9 @@
 package resolve
 
-import "github.com/RaniSputnik/ko/svc"
+import "github.com/RaniSputnik/ko/model"
 
 type boardResolver struct {
-	svc.Match
+	model.Match
 }
 
 func (r *boardResolver) Size() (int32, error) {

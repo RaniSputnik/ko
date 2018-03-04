@@ -1,4 +1,4 @@
-package kontext
+package model
 
 type User struct {
 	ID       string

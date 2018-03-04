@@ -2,7 +2,6 @@ package resolve
 
 import (
 	"github.com/RaniSputnik/ko/model"
-	"github.com/RaniSputnik/ko/svc"
 	graphql "github.com/neelance/graphql-go"
 )
 
@@ -19,7 +18,7 @@ func (r *matchConnectionResolver) TotalCount() (int32, error) {
 }
 
 type matchResolver struct {
-	svc.Match
+	model.Match
 }
 
 func (r *matchResolver) ID() graphql.ID {

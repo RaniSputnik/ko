@@ -58,7 +58,7 @@ func getUserContext(r *http.Request) (context.Context, bool) {
 		return userContextInvalid, false
 	}
 
-	return kontext.WithUser(r.Context(), kontext.User{ID: id}), true
+	return kontext.WithUser(r.Context(), model.User{ID: id}), true
 }
 
 func todoVerifyToken(token *jwt.Token) (interface{}, error) {
