@@ -15,7 +15,7 @@ import (
 
 	"github.com/RaniSputnik/ko/handle"
 	"github.com/RaniSputnik/ko/resolve"
-	"github.com/RaniSputnik/ko/schema"
+	"github.com/RaniSputnik/ko/resolve/schema"
 	"github.com/RaniSputnik/ko/svc"
 	"github.com/neelance/graphql-go"
 )

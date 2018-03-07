@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/RaniSputnik/ko/resolve"
-	"github.com/RaniSputnik/ko/schema"
+	"github.com/RaniSputnik/ko/resolve/schema"
 	"github.com/neelance/graphql-go"
 )
 

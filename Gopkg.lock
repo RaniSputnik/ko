@@ -15,19 +15,43 @@
 
 [[projects]]
   name = "github.com/mattes/migrate"
-  packages = [".","database","database/mysql","source","source/file"]
+  packages = [
+    ".",
+    "database",
+    "database/mysql",
+    "source",
+    "source/file"
+  ]
   revision = "035c07716cd373d88456ec4d701402df52584cb4"
   version = "v3.0.1"
 
 [[projects]]
   branch = "master"
   name = "github.com/neelance/graphql-go"
-  packages = [".","errors","internal/common","internal/exec","internal/exec/packer","internal/exec/resolvable","internal/exec/selected","internal/query","internal/schema","internal/validation","introspection","log","trace"]
+  packages = [
+    ".",
+    "errors",
+    "internal/common",
+    "internal/exec",
+    "internal/exec/packer",
+    "internal/exec/resolvable",
+    "internal/exec/selected",
+    "internal/query",
+    "internal/schema",
+    "internal/validation",
+    "introspection",
+    "log",
+    "trace"
+  ]
   revision = "b46637030579abd312c5eea21d36845b6e9e7ca4"
 
 [[projects]]
   name = "github.com/opentracing/opentracing-go"
-  packages = [".","ext","log"]
+  packages = [
+    ".",
+    "ext",
+    "log"
+  ]
   revision = "1949ddbfd147afd4d964a9f00b24eb291e0e7c38"
   version = "v1.0.2"
 
@@ -40,6 +64,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d930fd9a66c0256a703f04fdb3b3513149dd5c9597a2457d4c5b8e4a4af651f5"
+  inputs-digest = "1ea0fe3c84c7e0d6337c4a1a71df636a3d5dc860dc26da2e01e3f8a4a92c687e"
   solver-name = "gps-cdcl"
   solver-version = 1
