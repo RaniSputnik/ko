@@ -6,12 +6,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mattes/migrate"
 	"github.com/mattes/migrate/database/mysql"
+	// Migrations can be run from the files in this directory
 	_ "github.com/mattes/migrate/source/file"
 )
 
 // Dir is the directory where the database migration files reside
 // prefixed with the file:// protocol.
-const Dir = "file://./migrations"
+const Dir = "file://./data/migrations"
 
 func driver(db *sql.DB, migrationsPath string) (*migrate.Migrate, error) {
 	driver, err := mysql.WithInstance(db, &mysql.Config{})

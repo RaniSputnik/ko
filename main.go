@@ -8,11 +8,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/RaniSputnik/ko/data"
 	"github.com/RaniSputnik/ko/handle"
-	"github.com/RaniSputnik/ko/migrations"
 	"github.com/RaniSputnik/ko/resolve"
 	"github.com/RaniSputnik/ko/resolve/schema"
 	"github.com/RaniSputnik/ko/svc"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/neelance/graphql-go"
 )
 
@@ -24,7 +25,7 @@ func main() {
 	db := openDB(host, user, pwd)
 	// TODO run migrations should not happen on app startup
 	// should be an offline action
-	must(migrations.Up(db, migrations.Dir))
+	//must(migrations.Up(db, migrations.Dir))
 
 	data := createDataloaders(db)
 	s := graphql.MustParseSchema(schema.Text, resolve.Root(data))
@@ -53,6 +54,7 @@ func openDB(host, user, pwd string) *sql.DB {
 		log.Printf("Connecting to DB...")
 		db, err = sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/ko", user, pwd, host))
 		if err == nil {
+			log.Printf("Connected to DB successfully!")
 			return db
 		}
 		log.Printf("Failed to connect to DB, retrying in %s", delayDuration)
@@ -63,7 +65,7 @@ func openDB(host, user, pwd string) *sql.DB {
 
 func createDataloaders(db *sql.DB) resolve.Data {
 	return resolve.Data{
-		MatchSvc: svc.MatchSvc{DB: db},
+		MatchSvc: svc.MatchSvc{Store: data.MysqlStore{db}},
 	}
 }
 
