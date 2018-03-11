@@ -1,11 +1,16 @@
 package resolve
 
-import graphql "github.com/neelance/graphql-go"
+import (
+	"github.com/RaniSputnik/ko/model"
+	graphql "github.com/neelance/graphql-go"
+)
 
-type playerResolver struct{}
+type playerResolver struct {
+	model.User
+}
 
-func (r *playerResolver) ID() (graphql.ID, error) {
-	return graphql.ID(""), ErrNotImplemented
+func (r *playerResolver) ID() graphql.ID {
+	return graphql.ID(model.EncodeID(model.KindUser, r.User.ID))
 }
 
 func (r *playerResolver) Username() (string, error) {

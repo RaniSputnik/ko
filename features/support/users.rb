@@ -17,8 +17,12 @@ $Bob = User.new(2, "Bob")
 def login_user(name) 
     user = get_user(name)
     @current_user = user
-    payload = {:sub => Base64.strict_encode64("User:#{user.id}") }
+    payload = {:sub => encode_user_id(user.id) }
     @auth_token = JWT.encode payload, nil, 'none'
+end
+
+def encode_user_id(user_id)
+    Base64.strict_encode64("User:#{user_id}")
 end
 
 def get_user(name)

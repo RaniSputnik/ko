@@ -39,11 +39,21 @@ type MatchConnection {
 	totalCount: Int!
 }
 
+enum MatchStatus {
+	WAITING_FOR_OPPONENT
+	READY
+	IN_PROGRESS
+	COMPLETED
+}
+
 type Match {
 	id: ID!
+	status: MatchStatus!
 
 	# The player who created this match.
 	createdBy: Player!
+	# The player who did not create the match
+	opponent: Player
 	# Gets a player by stone colour.
 	player(colour: Colour!): Player!
 	# The player who will have the next move.

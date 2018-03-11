@@ -25,8 +25,20 @@ func (r *matchResolver) ID() graphql.ID {
 	return graphql.ID(model.EncodeID(model.KindMatch, r.Match.ID))
 }
 
-func (r *matchResolver) CreatedBy() (*playerResolver, error) {
-	return nil, ErrNotImplemented
+func (r *matchResolver) Status() model.MatchStatus {
+	return r.Match.Status()
+}
+
+func (r *matchResolver) CreatedBy() *playerResolver {
+	user := model.User{ID: r.Match.Owner}
+	return &playerResolver{user}
+}
+
+func (r *matchResolver) Opponent() *playerResolver {
+	if r.Match.Opponent == "" {
+		return nil
+	}
+	return &playerResolver{model.User{ID: r.Match.Opponent}}
 }
 
 func (r *matchResolver) Player(args struct{ Colour string }) (*playerResolver, error) {
