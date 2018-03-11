@@ -5,10 +5,14 @@ RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 # Copy project files
 WORKDIR /go/src/github.com/RaniSputnik/ko
-COPY . .
 
 # Install dependencies and ko api
-RUN dep ensure
+COPY Gopkg.toml Gopkg.lock ./
+RUN dep ensure -vendor-only
+
+# TODO split container and builder
+# so that we don't need go installed
+COPY . .
 RUN go install -v .
 
 # Run the API
