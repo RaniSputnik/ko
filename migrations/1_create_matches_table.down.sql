@@ -1,1 +1,1 @@
-DROP TABLE [IF EXIST] [Matches];
+DROP TABLE IF EXISTS Matches;

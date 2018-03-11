@@ -8,12 +8,8 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/mattes/migrate"
-	"github.com/mattes/migrate/database/mysql"
-	_ "github.com/mattes/migrate/source/file"
-
 	"github.com/RaniSputnik/ko/handle"
+	"github.com/RaniSputnik/ko/migrations"
 	"github.com/RaniSputnik/ko/resolve"
 	"github.com/RaniSputnik/ko/resolve/schema"
 	"github.com/RaniSputnik/ko/svc"
@@ -28,7 +24,7 @@ func main() {
 	db := openDB(host, user, pwd)
 	// TODO run migrations should not happen on app startup
 	// should be an offline action
-	runMigrations(db)
+	must(migrations.Up(db, migrations.Dir))
 
 	data := createDataloaders(db)
 	s := graphql.MustParseSchema(schema.Text, resolve.Root(data))
@@ -63,21 +59,6 @@ func openDB(host, user, pwd string) *sql.DB {
 		<-time.After(delayDuration)
 	}
 	panic(err)
-}
-
-func runMigrations(db *sql.DB) {
-	// Create migration driver
-	driver, err := mysql.WithInstance(db, &mysql.Config{})
-	must(err)
-	m, err := migrate.NewWithDatabaseInstance(
-		"file://./migrations", "mysql", driver)
-	must(err)
-
-	// Run the migrations
-	err = m.Up()
-	if err != nil && err != migrate.ErrNoChange {
-		panic(err)
-	}
 }
 
 func createDataloaders(db *sql.DB) resolve.Data {
