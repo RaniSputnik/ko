@@ -25,7 +25,7 @@ func TestJoinMatch(t *testing.T) {
 	mockStore.Func.GetMatch.Returns.Match = mockMatch
 	mockStore.Func.SaveMatch.Returns.Match = mockMatchWithOpponent
 
-	m := svc.MatchSvc{mockStore}
+	m := svc.MatchSvc{Store: mockStore}
 
 	t.Run("CallsGetMatchOnStore", func(t *testing.T) {
 		mockStore.Func.GetMatch.WasCalledXTimes = 0
@@ -72,6 +72,44 @@ func TestJoinMatch(t *testing.T) {
 		if mockStore.Func.SaveMatch.WasCalledWith.Match != mockMatchWithOpponent {
 			t.Errorf("Expected 'SaveMatch' to be called with match: '%v', but instead got '%v'",
 				mockMatchWithOpponent, mockStore.Func.SaveMatch.WasCalledWith.Match)
+		}
+	})
+
+	t.Run("FailsWhenUserJoinsTheirOwnMatch", func(t *testing.T) {
+		ownMatch := model.Match{
+			ID:        "our-own-match",
+			Owner:     loggedInUser.ID,
+			BoardSize: 19,
+		}
+		mockStore := &MockStore{}
+		mockStore.Func.GetMatch.Returns.Match = ownMatch
+		m := svc.MatchSvc{Store: mockStore}
+
+		_, err := m.JoinMatch(ctx, ownMatch.ID)
+		if _, ok := err.(model.ErrJoinedOwnMatch); !ok {
+			t.Errorf("Expected error of type: 'ErrJoinedOwnMatch', but got: '%v'", err)
+		}
+	})
+
+	t.Run("FailsWhenTheMatchIsNotFound", func(t *testing.T) {
+		mockStore := &MockStore{}
+		mockStore.Func.GetMatch.Returns.Err = model.ErrMatchNotFound{}
+		m := svc.MatchSvc{Store: mockStore}
+
+		_, err := m.JoinMatch(ctx, mockMatch.ID)
+		if _, ok := err.(model.ErrMatchNotFound); !ok {
+			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
+		}
+	})
+
+	t.Run("FailsWhenMatchAlreadyHasAnOpponent", func(t *testing.T) {
+		mockStore := &MockStore{}
+		mockStore.Func.GetMatch.Returns.Match = mockMatchWithOpponent
+		m := svc.MatchSvc{Store: mockStore}
+
+		_, err := m.JoinMatch(ctx, mockMatch.ID)
+		if _, ok := err.(model.ErrMatchAlreadyFull); !ok {
+			t.Errorf("Expected error of type: 'ErrMatchAlreadyFull', but got: '%v'", err)
 		}
 	})
 }

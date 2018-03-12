@@ -10,6 +10,13 @@ Given("{word} has created {int} match(es)") do |user_name, n_matches|
     end
 end
 
+# TODO define custom parameter type 'user'
+Given("{word} has created a match against {word}") do |creator_name, opponent_name|
+    creator = get_user(creator_name)
+    opponent = get_user(opponent_name)
+    $mysql_client.query("INSERT INTO Matches (Owner, Opponent, BoardSize) VALUES (#{creator.id},#{opponent.id},#{19})")
+end
+
 When(/^(?:she|he) creates a new match$/) do
     @response = make_request("mutation { createMatch { id }}")
     @response_body = JSON.parse(@response.body)
@@ -28,10 +35,6 @@ end
 Then(/^Alice should get a new match$/) do
     created_match = @response_body.dig "data", "createMatch"
     expect(created_match["id"]).to match($id_regexp)
-end
-
-Then(/^there should be no errors$/) do
-    expect(@response_body["errors"]).to eq(nil)
 end
 
 Then("the board should be {int}x{int}") do |sizex, sizey|

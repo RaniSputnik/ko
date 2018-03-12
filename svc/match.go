@@ -38,6 +38,14 @@ func (svc MatchSvc) JoinMatch(ctx context.Context, matchID string) (model.Match,
 	if err != nil {
 		return match, err
 	}
+
+	if match.Opponent != "" {
+		return match, model.ErrMatchAlreadyFull{}
+	}
+	if match.Owner == user.ID {
+		return match, model.ErrJoinedOwnMatch{}
+	}
+
 	match.Opponent = user.ID
 	return svc.Store.SaveMatch(ctx, match)
 }

@@ -3,13 +3,8 @@ package data
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/RaniSputnik/ko/model"
-)
-
-var (
-	ErrNotFound = errors.New("Not found")
 )
 
 type Store interface {
@@ -50,7 +45,7 @@ func (store MysqlStore) SaveMatch(ctx context.Context, match model.Match) (model
 	if rows, err := store.DB.ExecContext(ctx, updateMatchQuery, match.BoardSize, match.Opponent, match.ID); err != nil {
 		return match, err
 	} else if nrows, _ := rows.RowsAffected(); nrows == 0 {
-		return match, ErrNotFound
+		return match, model.ErrMatchNotFound{}
 	}
 	return match, nil
 }
@@ -104,7 +99,7 @@ func scanMatch(row scanner) (match model.Match, err error) {
 
 	if err = row.Scan(&gotID, &owner, &opponent, &boardSize); err != nil {
 		if err == sql.ErrNoRows {
-			return match, ErrNotFound
+			return match, model.ErrMatchNotFound{}
 		}
 		return match, err
 	}
