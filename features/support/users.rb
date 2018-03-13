@@ -42,9 +42,33 @@ def get_user(name)
     user
 end
 
+# TODO how can I move these to their own file
+# without getting 'uninitialized constant User (NameError)'
+
 ParameterType({
     :name => 'user',
     :regexp => /Alice|Bob|Clive|she|he|her|his/,
     :type => User,
     :transformer => lambda {|s| get_user(s) }
+})
+
+class Move
+    def initialize(name)
+        first_letter = name[0,1]
+        second_letter = name[1,2]
+        @name = name
+        @x = first_letter.ord - 'A'.ord
+        @y = second_letter.to_i - 1
+    end
+
+    attr_reader :name
+    attr_reader :x
+    attr_reader :y
+end
+
+ParameterType({
+    :name => 'move',
+    :regexp => /[A-Z][1-9]/,
+    :type => Move,
+    :transformer => lambda {|s| Move.new(s) }
 })
