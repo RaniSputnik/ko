@@ -17,7 +17,10 @@ $Clive = User.new(3, "Clive")
 
 def login_user(name)
     user = get_user(name)
-    @current_user = user
+    # This property is required for the user
+    # parameter type. TODO is there a way to
+    # change this back to an instance property?
+    $current_user = user
     payload = {:sub => encode_user_id(user.id) }
     @auth_token = JWT.encode payload, nil, 'none'
 end
@@ -31,10 +34,17 @@ def get_user(name)
         when "alice" then $Alice
         when "bob" then $Bob
         when "clive" then $Clive
-        when "she", "he" then @current_user
+        when "she", "he", "her", "his" then $current_user
         else raise "Unknown user: '#{name}'"
     end
 
     if !user then raise "Unknown user: '#{name}'" end
     user
 end
+
+ParameterType({
+    :name => 'user',
+    :regexp => /Alice|Bob|Clive|she|he|her|his/,
+    :type => User,
+    :transformer => lambda {|s| get_user(s) }
+})

@@ -1,38 +1,33 @@
-Given("{word} is logged in") do |user_name|
-    login_user(user_name)
+Given("{user} is logged in") do |user|
+    login_user(user.name)
 end
 
-# TODO define custom parameter type 'user'
-Given("{word} has created {int} match(es)") do |user_name, n_matches|
-    user = get_user(user_name)
+Given("{user} has created {int} match(es)") do |user, n_matches|
     for i in 1..n_matches do
         $mysql_client.query("INSERT INTO Matches (Owner, BoardSize) VALUES (#{user.id},#{19})")
     end
 end
 
-# TODO define custom parameter type 'user'
-Given("{word} has created a match against {word}") do |creator_name, opponent_name|
-    creator = get_user(creator_name)
-    opponent = get_user(opponent_name)
+Given("{user} has created a match against {user}") do |creator, opponent|
     $mysql_client.query("INSERT INTO Matches (Owner, Opponent, BoardSize) VALUES (#{creator.id},#{opponent.id},#{19})")
 end
 
-When(/^(?:she|he) creates a new match$/) do
+When("{user} creates a new match") do |user|
     @response = make_request("mutation { createMatch { id }}")
     @response_body = JSON.parse(@response.body)
 end
 
-When(/^(?:she|he) creates a new match without specifying board size$/) do
+When("{user} creates a new match without specifying board size") do |user|
     @response = make_request("mutation { createMatch { id, board { size }}}")
     @response_body = JSON.parse(@response.body)
 end
 
-When("Alice requests her matches") do
+When("{user} requests (her)(his) matches") do |user|
     @response = make_request("query { matches { nodes { id }}}")
     @response_body = JSON.parse(@response.body)
 end
 
-Then(/^Alice should get a new match$/) do
+Then("{user} should get a new match") do |user|
     created_match = @response_body.dig "data", "createMatch"
     expect(created_match["id"]).to match($id_regexp)
 end
@@ -47,7 +42,7 @@ Then("the board should be {int}x{int}") do |sizex, sizey|
     expect(got_board_size).to eq(sizey)
 end
 
-Then("she should get her {int} match(es)") do |expected_number_of_matches|
+Then("{user} should get (her)(his) {int} match(es)") do |user, expected_number_of_matches|
     match_nodes = @response_body.dig "data", "matches", "nodes"
 
     expect(match_nodes.length).to eq(expected_number_of_matches)

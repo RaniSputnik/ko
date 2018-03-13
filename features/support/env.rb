@@ -1,5 +1,6 @@
 $id_regexp = /^(?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/
 
 Before do
+    $current_user = nil
     clear_db()
 end
