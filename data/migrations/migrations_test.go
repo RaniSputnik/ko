@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RaniSputnik/ko/migrations"
+	"github.com/RaniSputnik/ko/data/migrations"
 )
 
 const TestDir = "file://."
@@ -25,6 +25,9 @@ func TestMigrationsRunSuccessfully(t *testing.T) {
 		if err := migrations.Up(db, TestDir); err != nil {
 			t.Errorf("migrations.Up failed: %s", err)
 		}
+
+		// TODO is there anyway to avoid the lock here?
+		// this always fails with "migrations.Down failed: can't acquire lock"
 		if err := migrations.Down(db, TestDir); err != nil {
 			t.Errorf("migrations.Down failed: %s", err)
 		}

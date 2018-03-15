@@ -3,6 +3,7 @@ package migrations
 import (
 	"database/sql"
 
+	// Use the mysql driver
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mattes/migrate"
 	"github.com/mattes/migrate/database/mysql"
