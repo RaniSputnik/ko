@@ -86,23 +86,23 @@ type EventConnection {
 
 interface Event {
 	player: Player!
-	localisedDescription: String!
+	message: String!
 }
 
 type PlaceStone implements Event {
 	player: Player!
-	localisedDescription: String!
+	message: String!
 	x: Int!
 	y: Int!
 }
 
 type Skip implements Event {
 	player: Player!
-	localisedDescription: String!
+	message: String!
 }
 
 type Resign implements Event {
 	player: Player!
-	localisedDescription: String!
+	message: String!
 }
 `

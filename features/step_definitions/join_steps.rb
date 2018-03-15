@@ -1,7 +1,6 @@
 When("{user} joins {user}('s)( own) match") do |opponent, creator|
     # TODO find a way to make this less janky
-    match_db_id = $mysql_client.last_id
-    match_id = Base64.strict_encode64("Match:#{match_db_id}")
+    match_id = match_id_from_db_id($mysql_client.last_id)
     @response = make_request("mutation { joinMatch(matchId:\"#{match_id}\") { id opponent { id } status }}")
     @response_body = JSON.parse(@response.body)
 end

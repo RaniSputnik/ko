@@ -12,7 +12,7 @@ func (r *eventsConnectionResolver) TotalCount() int32 {
 
 type event interface {
 	Player() *playerResolver
-	LocalisedDescription() string
+	Message() string
 }
 
 type eventResolver struct {
