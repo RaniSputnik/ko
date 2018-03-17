@@ -4,14 +4,15 @@ end
 
 When("{user} places a stone at {move}") do |user, move|
     match_id = match_id_from_db_id($mysql_client.last_id)
-    @response = make_request("mutation { playStone(matchId:\"#{match_id}\", x:#{move.x}, y:#{move.y}) { id events { nodes { message }}}}")
+    @response = make_request("mutation { playStone(matchId:\"#{match_id}\", x:#{move.x}, y:#{move.y}) { message x y }}")
     @response_body = JSON.parse(@response.body)
 end
 
-Then("there should be {int} move(s) played") do |number_of_moves|
-    events = @response_body.dig "data", "playStone", "events", "nodes"
-    expect(events).to_not be_nil
-    expect(events.length).to be(number_of_moves)
+Then("there should be a move at {int},{int}") do |movex, movey|
+    event = @response_body.dig "data", "playStone"
+    expect(event).to_not be_nil
+    expect(event.x).to be(movex)
+    expect(event.y).to be(movey)
 end
 
 Given("the folling moves have been played: {moves}") do |moves|

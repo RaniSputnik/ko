@@ -18,9 +18,9 @@ type Mutation {
 	createMatch(boardSize:Int = 19): Match!
 	joinMatch(matchId: ID!): Match!
 
-	playStone(matchId: ID!, x: Int!, y:Int!): Match!
-	skip(matchId: ID!): Match!
-	resign(matchId: ID!): Match!
+	playStone(matchId: ID!, x: Int!, y:Int!): PlayStone!
+	skip(matchId: ID!): Skip!
+	resign(matchId: ID!): Resign!
 }
 
 type Player {
@@ -89,7 +89,7 @@ interface Event {
 	message: String!
 }
 
-type PlaceStone implements Event {
+type PlayStone implements Event {
 	player: Player!
 	message: String!
 	x: Int!

@@ -10,6 +10,7 @@ import (
 
 type Data struct {
 	svc.MatchSvc
+	svc.PlaySvc
 }
 
 type Resolver interface{}
@@ -30,7 +31,7 @@ func (r *rootResolver) Matches(ctx context.Context, args pagingArgs) (*matchConn
 
 	resolvers := make([]*matchResolver, len(matches))
 	for i, m := range matches {
-		resolvers[i] = &matchResolver{m}
+		resolvers[i] = &matchResolver{r.Data, m}
 	}
 	return &matchConnectionResolver{resolvers}, nil
 }
@@ -46,7 +47,7 @@ func (r *rootResolver) CreateMatch(ctx context.Context, args struct{ BoardSize i
 		args.BoardSize = svc.BoardSizeNormal
 	}
 	match, err := r.MatchSvc.CreateMatch(ctx, int(args.BoardSize))
-	return &matchResolver{match}, err
+	return &matchResolver{r.Data, match}, err
 }
 
 type matchArgs struct {
@@ -54,22 +55,29 @@ type matchArgs struct {
 }
 
 func (r *rootResolver) JoinMatch(ctx context.Context, args matchArgs) (*matchResolver, error) {
+	// TODO assert kind
 	_, matchID := model.DecodeID(string(args.MatchID))
 	match, err := r.MatchSvc.JoinMatch(ctx, matchID)
-	return &matchResolver{match}, err
+	return &matchResolver{r.Data, match}, err
 }
 
-func (r *rootResolver) PlayStone(args struct {
+func (r *rootResolver) PlayStone(ctx context.Context, args struct {
 	MatchID graphql.ID
 	X, Y    int32
-}) (*matchResolver, error) {
+}) (*playStoneResolver, error) {
+	// TODO assert kind
+	_, matchID := model.DecodeID(string(args.MatchID))
+	_, err := r.PlaySvc.Play(ctx, matchID, int(args.X), int(args.Y))
+	if err != nil {
+		return nil, err
+	}
 	return nil, ErrNotImplemented
 }
 
-func (r *rootResolver) Skip(args matchArgs) (*matchResolver, error) {
+func (r *rootResolver) Skip(args matchArgs) (*skipResolver, error) {
 	return nil, ErrNotImplemented
 }
 
-func (r *rootResolver) Resign(args matchArgs) (*matchResolver, error) {
+func (r *rootResolver) Resign(args matchArgs) (*resignResolver, error) {
 	return nil, ErrNotImplemented
 }

@@ -6,7 +6,7 @@ Given Alice is logged in
 Scenario: Alice plays a stone
 Given Alice is playing against Bob
 When she places a stone at A3
-Then there should be 1 move played
+Then there should be a move at 0,2
 And the match status should be IN_PROGRESS
 And there should be no errors
 

@@ -18,6 +18,7 @@ func (r *matchConnectionResolver) TotalCount() (int32, error) {
 }
 
 type matchResolver struct {
+	Data
 	model.Match
 }
 
