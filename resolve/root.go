@@ -67,11 +67,11 @@ func (r *rootResolver) PlayStone(ctx context.Context, args struct {
 }) (*playStoneResolver, error) {
 	// TODO assert kind
 	_, matchID := model.DecodeID(string(args.MatchID))
-	_, err := r.PlaySvc.Play(ctx, matchID, int(args.X), int(args.Y))
+	ev, err := r.PlaySvc.Play(ctx, matchID, int(args.X), int(args.Y))
 	if err != nil {
 		return nil, err
 	}
-	return nil, ErrNotImplemented
+	return &playStoneResolver{ev}, nil
 }
 
 func (r *rootResolver) Skip(args matchArgs) (*skipResolver, error) {

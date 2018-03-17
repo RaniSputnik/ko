@@ -6,6 +6,9 @@ import (
 	"github.com/RaniSputnik/ko/model"
 )
 
+var Alice = model.User{}
+var Bob = model.User{ID: "Bob", Username: "testbob"}
+
 type MockStore struct {
 	Func struct {
 		SaveMatch struct {

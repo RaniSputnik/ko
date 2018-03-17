@@ -43,16 +43,19 @@ func (r *eventResolver) ToResign() (*resignResolver, bool) {
 }
 
 type playStoneResolver struct {
-	model.Event
-	x, y int32
+	model.PlaceStoneEvent
+}
+
+func (r *playStoneResolver) Message() string {
+	return ""
 }
 
 func (r *playStoneResolver) Player(ctx context.Context) (*playerResolver, error) {
 	return nil, ErrNotImplemented
 }
 
-func (r *playStoneResolver) X() int32 { return r.x }
-func (r *playStoneResolver) Y() int32 { return r.y }
+func (r *playStoneResolver) X() int32 { return int32(r.PlaceStoneEvent.X) }
+func (r *playStoneResolver) Y() int32 { return int32(r.PlaceStoneEvent.Y) }
 
 type skipResolver struct {
 	event

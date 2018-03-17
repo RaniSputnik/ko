@@ -11,11 +11,11 @@ import (
 )
 
 func TestJoinMatch(t *testing.T) {
-	loggedInUser := model.User{ID: "Bob", Username: "testbob"}
+	loggedInUser := Bob
 	ctx := kontext.WithUser(context.Background(), loggedInUser)
 	mockMatch := model.Match{
 		ID:        "test-match",
-		Owner:     "Alice",
+		Owner:     Alice.ID,
 		BoardSize: 19,
 	}
 	mockMatchWithOpponent := mockMatch
