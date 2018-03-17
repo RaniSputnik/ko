@@ -64,8 +64,10 @@ func openDB(host, user, pwd string) *sql.DB {
 }
 
 func createDataloaders(db *sql.DB) resolve.Data {
+	store := data.MysqlStore{DB: db}
 	return resolve.Data{
-		MatchSvc: svc.MatchSvc{Store: data.MysqlStore{db}},
+		MatchSvc: svc.MatchSvc{Store: store},
+		PlaySvc:  svc.PlaySvc{MoveStore: store},
 	}
 }
 
