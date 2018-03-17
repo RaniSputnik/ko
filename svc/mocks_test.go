@@ -3,6 +3,8 @@ package svc_test
 import (
 	"context"
 
+	"github.com/RaniSputnik/ko/data"
+
 	"github.com/RaniSputnik/ko/model"
 )
 
@@ -44,6 +46,17 @@ type MockStore struct {
 				Err   error
 			}
 		}
+		SaveMove struct {
+			WasCalledXTimes int
+			WasCalledWith   struct {
+				Ctx  context.Context
+				Move data.Move
+			}
+			Returns struct {
+				Move data.Move
+				Err  error
+			}
+		}
 	}
 }
 
@@ -66,4 +79,11 @@ func (m *MockStore) GetMatch(ctx context.Context, matchID string) (model.Match, 
 	m.Func.GetMatch.WasCalledWith.MatchID = matchID
 	m.Func.GetMatch.WasCalledXTimes++
 	return m.Func.GetMatch.Returns.Match, m.Func.GetMatch.Returns.Err
+}
+
+func (m *MockStore) SaveMove(ctx context.Context, move data.Move) (data.Move, error) {
+	m.Func.SaveMove.WasCalledWith.Ctx = ctx
+	m.Func.SaveMove.WasCalledWith.Move = move
+	m.Func.SaveMove.WasCalledXTimes++
+	return m.Func.SaveMove.Returns.Move, m.Func.GetMatch.Returns.Err
 }

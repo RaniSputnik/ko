@@ -1,8 +1,18 @@
 package data
 
 import (
+	"database/sql"
 	"strconv"
 )
+
+type Store interface {
+	MatchStore
+	MoveStore
+}
+
+type MysqlStore struct {
+	DB *sql.DB
+}
 
 type errInvalidID string
 

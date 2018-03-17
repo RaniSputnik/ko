@@ -13,7 +13,9 @@ func TestPlay(t *testing.T) {
 	loggedInUser := Bob
 	ctx := kontext.WithUser(context.Background(), loggedInUser)
 
-	p := svc.PlaySvc{Store: &MockStore{}} // TODO use moves store
+	mockStore := &MockStore{}
+	p := svc.PlaySvc{MoveStore: mockStore}
+
 	mockMatch := model.Match{
 		ID:        "test-match",
 		Owner:     "Alice",
@@ -35,6 +37,18 @@ func TestPlay(t *testing.T) {
 		}
 		if ev.X != playX {
 			t.Errorf("Expected Y: '%d', Got: '%d'", playY, ev.Y)
+		}
+	})
+
+	t.Run("CallsSaveMoveOnStore", func(t *testing.T) {
+		playX, playY := 1, 2
+		mockStore.Func.SaveMove.WasCalledXTimes = 0
+
+		p.Play(ctx, mockMatch.ID, playX, playY)
+
+		if mockStore.Func.SaveMove.WasCalledXTimes != 1 {
+			t.Errorf("Expected save move to be called once but instead was called '%d' times.",
+				mockStore.Func.SaveMove.WasCalledXTimes)
 		}
 	})
 }

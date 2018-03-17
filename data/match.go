@@ -7,14 +7,10 @@ import (
 	"github.com/RaniSputnik/ko/model"
 )
 
-type Store interface {
+type MatchStore interface {
 	SaveMatch(ctx context.Context, match model.Match) (model.Match, error)
 	GetMatches(ctx context.Context, userID string) ([]model.Match, error)
 	GetMatch(ctx context.Context, matchID string) (model.Match, error)
-}
-
-type MysqlStore struct {
-	DB *sql.DB
 }
 
 const createMatchQuery = `INSERT INTO Matches (Owner, BoardSize) VALUES (?,?)`

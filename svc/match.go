@@ -15,7 +15,7 @@ const (
 )
 
 type MatchSvc struct {
-	data.Store
+	Store data.MatchStore
 }
 
 func (svc MatchSvc) CreateMatch(ctx context.Context, boardSize int) (model.Match, error) {

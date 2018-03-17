@@ -11,16 +11,25 @@ import (
 )
 
 type PlaySvc struct {
-	data.Store
+	MoveStore data.MoveStore
 }
 
 func (svc PlaySvc) Play(ctx context.Context, matchID string, x, y int) (model.PlaceStoneEvent, error) {
 	currentUser := kontext.MustGetUser(ctx)
+
 	ev := model.PlaceStoneEvent{
 		PlayerID: currentUser.ID,
 		X:        x,
 		Y:        y,
 	}
+
+	svc.MoveStore.SaveMove(ctx, data.Move{
+		UserID:  currentUser.ID,
+		MatchID: matchID,
+		X:       x,
+		Y:       y,
+	})
+
 	return ev, nil
 }
 
