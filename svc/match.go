@@ -26,11 +26,26 @@ func (svc MatchSvc) CreateMatch(ctx context.Context, boardSize int) (model.Match
 
 func (svc MatchSvc) GetMatches(ctx context.Context) ([]model.Match, error) {
 	user := kontext.MustGetUser(ctx)
-	return svc.Store.GetMatches(ctx, user.ID)
+	matches, err := svc.Store.GetMatches(ctx, user.ID)
+	if err != nil {
+		return nil, err
+	}
+	for i, match := range matches {
+		match.ID = model.EncodeID(model.KindMatch, match.ID)
+		matches[i] = match
+	}
+	return matches, nil
 }
 
 func (svc MatchSvc) JoinMatch(ctx context.Context, matchID string) (model.Match, error) {
 	user := kontext.MustGetUser(ctx)
+
+	// Decode match ID
+	kind, matchID := model.DecodeID(matchID)
+	if kind != model.KindMatch {
+		return model.Match{}, model.ErrMatchNotFound{}
+	}
+
 	// TODO guard against concurrent writes to match
 	// eg. Multiple users joining the same match at
 	// the same time. Store match version.
@@ -47,5 +62,8 @@ func (svc MatchSvc) JoinMatch(ctx context.Context, matchID string) (model.Match,
 	}
 
 	match.Opponent = user.ID
-	return svc.Store.SaveMatch(ctx, match)
+	if _, err := svc.Store.SaveMatch(ctx, match); err != nil {
+		return model.Match{}, err
+	}
+	return match, nil
 }

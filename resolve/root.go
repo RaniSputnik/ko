@@ -3,7 +3,6 @@ package resolve
 import (
 	"context"
 
-	"github.com/RaniSputnik/ko/model"
 	"github.com/RaniSputnik/ko/svc"
 	graphql "github.com/neelance/graphql-go"
 )
@@ -55,9 +54,7 @@ type matchArgs struct {
 }
 
 func (r *rootResolver) JoinMatch(ctx context.Context, args matchArgs) (*matchResolver, error) {
-	// TODO assert kind
-	_, matchID := model.DecodeID(string(args.MatchID))
-	match, err := r.MatchSvc.JoinMatch(ctx, matchID)
+	match, err := r.MatchSvc.JoinMatch(ctx, string(args.MatchID))
 	return &matchResolver{r.Data, match}, err
 }
 
@@ -65,13 +62,8 @@ func (r *rootResolver) PlayStone(ctx context.Context, args struct {
 	MatchID graphql.ID
 	X, Y    int32
 }) (*playStoneResolver, error) {
-	// TODO assert kind
-	_, matchID := model.DecodeID(string(args.MatchID))
-	ev, err := r.PlaySvc.Play(ctx, matchID, int(args.X), int(args.Y))
-	if err != nil {
-		return nil, err
-	}
-	return &playStoneResolver{ev}, nil
+	ev, err := r.PlaySvc.Play(ctx, string(args.MatchID), int(args.X), int(args.Y))
+	return &playStoneResolver{ev}, err
 }
 
 func (r *rootResolver) Skip(args matchArgs) (*skipResolver, error) {

@@ -17,8 +17,8 @@ func TestPlay(t *testing.T) {
 	p := svc.PlaySvc{MoveStore: mockStore}
 
 	mockMatch := model.Match{
-		ID:        "test-match",
-		Owner:     "Alice",
+		ID:        MatchID12345,
+		Owner:     Alice.ID,
 		BoardSize: 19,
 	}
 
@@ -49,6 +49,24 @@ func TestPlay(t *testing.T) {
 		if mockStore.Func.SaveMove.WasCalledXTimes != 1 {
 			t.Errorf("Expected save move to be called once but instead was called '%d' times.",
 				mockStore.Func.SaveMove.WasCalledXTimes)
+		}
+	})
+
+	t.Run("FailsWithNotFoundWhenIDIsInvalid", func(t *testing.T) {
+		anInvalidID := "test-match"
+		aUserID := "VXNlcjoxMjM0NQ=="
+		playX, playY := 1, 2
+
+		var err error
+		var ok bool
+		_, err = p.Play(ctx, anInvalidID, playX, playY)
+		if _, ok = err.(model.ErrMatchNotFound); !ok {
+			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
+		}
+
+		_, err = p.Play(ctx, aUserID, playX, playY)
+		if _, ok = err.(model.ErrMatchNotFound); !ok {
+			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
 		}
 	})
 }

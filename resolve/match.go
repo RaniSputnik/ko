@@ -23,7 +23,7 @@ type matchResolver struct {
 }
 
 func (r *matchResolver) ID() graphql.ID {
-	return graphql.ID(model.EncodeID(model.KindMatch, r.Match.ID))
+	return graphql.ID(r.Match.ID)
 }
 
 func (r *matchResolver) Status() model.MatchStatus {

@@ -17,6 +17,12 @@ type PlaySvc struct {
 func (svc PlaySvc) Play(ctx context.Context, matchID string, x, y int) (model.PlaceStoneEvent, error) {
 	currentUser := kontext.MustGetUser(ctx)
 
+	// Decode match ID
+	kind, matchID := model.DecodeID(matchID)
+	if kind != model.KindMatch {
+		return model.PlaceStoneEvent{}, model.ErrMatchNotFound{}
+	}
+
 	ev := model.PlaceStoneEvent{
 		PlayerID: currentUser.ID,
 		X:        x,

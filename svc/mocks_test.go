@@ -8,8 +8,15 @@ import (
 	"github.com/RaniSputnik/ko/model"
 )
 
-var Alice = model.User{}
-var Bob = model.User{ID: "Bob", Username: "testbob"}
+var (
+	Alice = model.User{ID: "Alice", Username: "testalice"}
+	Bob   = model.User{ID: "Bob", Username: "testbob"}
+)
+
+const (
+	MatchID12345 = "TWF0Y2g6MTIzNDU="
+	MatchID67890 = "TWF0Y2g6Njc4OTA="
+)
 
 type MockStore struct {
 	Func struct {

@@ -14,7 +14,7 @@ func TestJoinMatch(t *testing.T) {
 	loggedInUser := Bob
 	ctx := kontext.WithUser(context.Background(), loggedInUser)
 	mockMatch := model.Match{
-		ID:        "test-match",
+		ID:        MatchID12345,
 		Owner:     Alice.ID,
 		BoardSize: 19,
 	}
@@ -35,7 +35,7 @@ func TestJoinMatch(t *testing.T) {
 				mockStore.Func.GetMatch.WasCalledXTimes)
 		}
 
-		if mockStore.Func.GetMatch.WasCalledWith.MatchID != mockMatch.ID {
+		if mockStore.Func.GetMatch.WasCalledWith.MatchID != "12345" {
 			t.Errorf("Expected 'GetMatch' to be called with matchID: '%s', but instead got '%s'",
 				mockMatch.ID, mockStore.Func.GetMatch.WasCalledWith.MatchID)
 		}
@@ -77,7 +77,7 @@ func TestJoinMatch(t *testing.T) {
 
 	t.Run("FailsWhenUserJoinsTheirOwnMatch", func(t *testing.T) {
 		ownMatch := model.Match{
-			ID:        "our-own-match",
+			ID:        MatchID67890,
 			Owner:     loggedInUser.ID,
 			BoardSize: 19,
 		}
@@ -98,6 +98,23 @@ func TestJoinMatch(t *testing.T) {
 
 		_, err := m.JoinMatch(ctx, mockMatch.ID)
 		if _, ok := err.(model.ErrMatchNotFound); !ok {
+			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
+		}
+	})
+
+	t.Run("FailsWithNotFoundWhenIDIsInvalid", func(t *testing.T) {
+		anInvalidID := "test-match"
+		aUserID := "VXNlcjoxMjM0NQ=="
+
+		var err error
+		var ok bool
+		_, err = m.JoinMatch(ctx, anInvalidID)
+		if _, ok = err.(model.ErrMatchNotFound); !ok {
+			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
+		}
+
+		_, err = m.JoinMatch(ctx, aUserID)
+		if _, ok = err.(model.ErrMatchNotFound); !ok {
 			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
 		}
 	})
