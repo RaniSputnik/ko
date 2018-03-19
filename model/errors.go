@@ -1,5 +1,9 @@
 package model
 
+import (
+	"fmt"
+)
+
 type Error interface {
 	error
 
@@ -60,4 +64,17 @@ func (ErrNotParticipating) Type() string {
 
 func (ErrNotParticipating) Error() string {
 	return "You are not participating in the match."
+}
+
+type ErrOutOfBounds struct {
+	X, Y      int
+	BoardSize int
+}
+
+func (ErrOutOfBounds) Type() string {
+	return "OutOfBounds"
+}
+
+func (e ErrOutOfBounds) Error() string {
+	return fmt.Sprintf("Can not place stone at (%d,%d) outside board (%d).", e.X, e.Y, e.BoardSize)
 }
