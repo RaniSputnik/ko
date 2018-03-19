@@ -144,6 +144,39 @@ func TestNextReturnsNextUsersTurn(t *testing.T) {
 	}
 }
 
+func TestOnlyTheNextPlayerCanPlay(t *testing.T) {
+	m := game.Match{
+		Owner:    &Alice,
+		Opponent: &Bob,
+		Board:    game.Board{Size: game.BoardSizeNormal},
+	}
+
+	// Alice is the owner, it is her turn
+	_, err := m.Play(&Bob, 0, 0)
+	expected := model.ErrNotYourTurn{Next: &Alice}
+	if err != expected {
+		t.Errorf("Match where owner starts. Expected: %v, got: %v", expected, err)
+	}
+
+	// Reverse the colours, it should be Bob's turn
+	m.ColoursReversed = true
+
+	m, err = m.Play(&Alice, 0, 0)
+	expected = model.ErrNotYourTurn{Next: &Bob}
+	if err != expected {
+		t.Errorf("Match with colours reversed. Expected: %v, got: %v", expected, err)
+	}
+
+	// Add one move now it's Alice's turn
+	m, _ = m.Play(&Bob, 0, 0)
+
+	m, err = m.Play(&Bob, 1, 1)
+	expected = model.ErrNotYourTurn{Next: &Alice}
+	if err != expected {
+		t.Errorf("Match with 1 move. Expected: %v, got: %v", expected, err)
+	}
+}
+
 type mockMove struct{}
 
 func (mv mockMove) String() string { return "A mock move" }

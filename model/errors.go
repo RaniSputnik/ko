@@ -78,3 +78,18 @@ func (ErrOutOfBounds) Type() string {
 func (e ErrOutOfBounds) Error() string {
 	return fmt.Sprintf("Can not place stone at (%d,%d) outside board (%d).", e.X, e.Y, e.BoardSize)
 }
+
+type ErrNotYourTurn struct {
+	Next *User
+}
+
+func (ErrNotYourTurn) Type() string {
+	return "NotYourTurn"
+}
+
+func (e ErrNotYourTurn) Error() string {
+	if e.Next == nil {
+		return "It is not your turn to play."
+	}
+	return fmt.Sprintf("It is not your turn, %s will play next.", e.Next.Username)
+}

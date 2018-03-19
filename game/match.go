@@ -34,16 +34,16 @@ func (m Match) Next() *model.User {
 // the given position. Returns an error if the move is illegal.
 func (m Match) Play(player *model.User, x, y int) (Match, error) {
 	playRules := []playRule{
+		itMustBeYourTurn,
 		moveMustBeInsideBoardSize,
 	}
 
+	mv := PlayStone{player, x, y}
 	for _, rule := range playRules {
-		if err := rule(m, x, y); err != nil {
+		if err := rule(m, mv); err != nil {
 			return m, err
 		}
 	}
-
-	mv := PlayStone{player, x, y}
 
 	m.Board.Moves = append(m.Board.Moves, mv)
 	return m, nil
