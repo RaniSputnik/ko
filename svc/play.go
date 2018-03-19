@@ -34,6 +34,10 @@ func (svc PlaySvc) Play(ctx context.Context, matchID string, x, y int) (model.Pl
 		return model.PlaceStoneEvent{}, model.ErrMatchNotStarted{}
 	}
 
+	if match.Owner != currentUser.ID && match.Opponent != currentUser.ID {
+		return model.PlaceStoneEvent{}, model.ErrNotParticipating{}
+	}
+
 	ev := model.PlaceStoneEvent{
 		PlayerID: currentUser.ID,
 		X:        x,

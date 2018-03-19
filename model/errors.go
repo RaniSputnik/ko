@@ -51,3 +51,13 @@ func (ErrMatchNotStarted) Type() string {
 func (ErrMatchNotStarted) Error() string {
 	return "The match has not been started."
 }
+
+type ErrNotParticipating struct{}
+
+func (ErrNotParticipating) Type() string {
+	return "NotParticipatingMatch"
+}
+
+func (ErrNotParticipating) Error() string {
+	return "You are not participating in the match."
+}

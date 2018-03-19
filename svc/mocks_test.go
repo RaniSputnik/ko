@@ -11,6 +11,7 @@ import (
 var (
 	Alice = model.User{ID: "Alice", Username: "testalice"}
 	Bob   = model.User{ID: "Bob", Username: "testbob"}
+	Clive = model.User{ID: "Clive", Username: "testclive"}
 )
 
 const (
