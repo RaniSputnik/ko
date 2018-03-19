@@ -67,7 +67,7 @@ func createDataloaders(db *sql.DB) resolve.Data {
 	store := data.MysqlStore{DB: db}
 	return resolve.Data{
 		MatchSvc: svc.MatchSvc{Store: store},
-		PlaySvc:  svc.PlaySvc{MoveStore: store},
+		PlaySvc:  svc.PlaySvc{MatchStore: store, MoveStore: store},
 	}
 }
 

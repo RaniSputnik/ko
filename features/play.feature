@@ -11,13 +11,13 @@ And the match status should be IN_PROGRESS
 And there should be no errors
 
 Scenario: A stone is played when there is no opponent
-Given she has created 1 match
+Given Alice has created 1 match
 When she places a stone at A3
-Then she should get an error: 'The match does not have an opponent yet.'
+Then she should get an error: 'The match has not been started.'
 
 Scenario: A stone is played in a match Alice is not a part of
 Given Bob is playing against Clive
-When she places a stone at A3
+When Alice places a stone at A3
 Then she should get an error: 'You are not participating in the match.'
 
 Scenario: A stone is played in an occupied position

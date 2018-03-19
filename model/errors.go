@@ -41,3 +41,13 @@ func (ErrMatchAlreadyFull) Type() string {
 func (ErrMatchAlreadyFull) Error() string {
 	return "The match is already full."
 }
+
+type ErrMatchNotStarted struct{}
+
+func (ErrMatchNotStarted) Type() string {
+	return "MatchNotStarted"
+}
+
+func (ErrMatchNotStarted) Error() string {
+	return "The match has not been started."
+}

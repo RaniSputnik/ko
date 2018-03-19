@@ -11,7 +11,8 @@ import (
 )
 
 type PlaySvc struct {
-	MoveStore data.MoveStore
+	MatchStore data.MatchStore
+	MoveStore  data.MoveStore
 }
 
 func (svc PlaySvc) Play(ctx context.Context, matchID string, x, y int) (model.PlaceStoneEvent, error) {
@@ -21,6 +22,16 @@ func (svc PlaySvc) Play(ctx context.Context, matchID string, x, y int) (model.Pl
 	kind, matchID := model.DecodeID(matchID)
 	if kind != model.KindMatch {
 		return model.PlaceStoneEvent{}, model.ErrMatchNotFound{}
+	}
+
+	match, err := svc.MatchStore.GetMatch(ctx, matchID)
+	if err != nil {
+		return model.PlaceStoneEvent{}, err
+	}
+
+	matchStatus := match.Status()
+	if matchStatus == model.MatchStatusWaiting {
+		return model.PlaceStoneEvent{}, model.ErrMatchNotStarted{}
 	}
 
 	ev := model.PlaceStoneEvent{

@@ -14,12 +14,21 @@ func TestPlay(t *testing.T) {
 	ctx := kontext.WithUser(context.Background(), loggedInUser)
 
 	mockStore := &MockStore{}
-	p := svc.PlaySvc{MoveStore: mockStore}
+	p := svc.PlaySvc{MatchStore: mockStore, MoveStore: mockStore}
 
 	mockMatch := model.Match{
 		ID:        MatchID12345,
 		Owner:     Alice.ID,
 		BoardSize: 19,
+		Opponent:  Bob.ID,
+	}
+	mockStore.Func.GetMatch.Returns.Match = mockMatch
+
+	mockMatchWithoutOpponent := model.Match{
+		ID:        MatchID12345,
+		Owner:     Alice.ID,
+		BoardSize: 19,
+		Opponent:  "",
 	}
 
 	t.Run("ReturnsValidPlayStoneEvent", func(t *testing.T) {
@@ -67,6 +76,19 @@ func TestPlay(t *testing.T) {
 		_, err = p.Play(ctx, aUserID, playX, playY)
 		if _, ok = err.(model.ErrMatchNotFound); !ok {
 			t.Errorf("Expected error of type: 'ErrMatchNotFound', but got: '%v'", err)
+		}
+	})
+
+	t.Run("FailsWhenMatchDoesNotHaveAnOpponent", func(t *testing.T) {
+		mockStore := &MockStore{}
+		mockStore.Func.GetMatch.Returns.Match = mockMatchWithoutOpponent
+		p := svc.PlaySvc{MatchStore: mockStore, MoveStore: mockStore}
+
+		playX, playY := 1, 2
+		_, err := p.Play(ctx, mockMatch.ID, playX, playY)
+
+		if _, ok := err.(model.ErrMatchNotStarted); !ok {
+			t.Errorf("Expected error of type 'ErrMatchNotStarted', but got: '%v'", err)
 		}
 	})
 }
