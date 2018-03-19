@@ -5,3 +5,8 @@ const (
 	BoardSizeSmall  = 13
 	BoardSizeNormal = 19
 )
+
+type Board struct {
+	Size  int
+	Moves []Move
+}

@@ -42,13 +42,9 @@ func TestCanNotPlayOutOfBounds(t *testing.T) {
 
 	newMatch := func(boardSize int) game.Match {
 		return game.Match{
-			ID:       TestID,
 			Owner:    &Alice,
 			Opponent: &Bob,
-			Board: game.Board{
-				Size:  boardSize,
-				Moves: []game.Move{},
-			},
+			Board:    game.Board{Size: boardSize},
 		}
 	}
 
@@ -78,3 +74,78 @@ func TestCanNotPlayOutOfBounds(t *testing.T) {
 		}
 	}
 }
+
+func TestNextReturnsNextUsersTurn(t *testing.T) {
+	genMoves := func(n int) []game.Move {
+		moves := make([]game.Move, n)
+		for i := 0; i < n; i++ {
+			moves[i] = mockMove{}
+		}
+		return moves
+	}
+
+	testCases := []struct {
+		Match  game.Match
+		Expect *model.User
+	}{
+		{
+			Match: game.Match{
+				Owner:    &Alice,
+				Opponent: &Bob,
+			},
+			Expect: &Alice,
+		},
+		{
+			Match: game.Match{
+				Owner:    &Bob,
+				Opponent: &Alice,
+			},
+			Expect: &Bob,
+		},
+		{
+			Match: game.Match{
+				Owner:           &Bob,
+				Opponent:        &Alice,
+				ColoursReversed: true,
+			},
+			Expect: &Alice,
+		},
+		{
+			Match: game.Match{
+				Owner:    &Alice,
+				Opponent: &Bob,
+				Board:    game.Board{Moves: genMoves(1)},
+			},
+			Expect: &Bob,
+		},
+		{
+			Match: game.Match{
+				Owner:           &Alice,
+				Opponent:        &Bob,
+				Board:           game.Board{Moves: genMoves(2)},
+				ColoursReversed: true,
+			},
+			Expect: &Bob,
+		},
+		{
+			Match: game.Match{
+				Owner:    &Alice,
+				Opponent: &Bob,
+				Board:    game.Board{Moves: genMoves(15)},
+			},
+			Expect: &Bob,
+		},
+	}
+
+	for i, test := range testCases {
+		if got := test.Match.Next(); got != test.Expect {
+			t.Errorf("Match no.%d, Expected next player: %v, Got: %v", i+1, test.Expect, got)
+		}
+	}
+}
+
+type mockMove struct{}
+
+func (mv mockMove) String() string { return "A mock move" }
+
+func (mv mockMove) Player() *model.User { return nil }
