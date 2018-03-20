@@ -206,11 +206,11 @@ func TestStateReturnsStones(t *testing.T) {
 		return m
 	}
 
-	state := func(stones ...stone) []game.State {
-		s := make([]game.State, boardSize*boardSize)
+	state := func(stones ...stone) []game.Colour {
+		s := make([]game.Colour, boardSize*boardSize)
 		for _, st := range stones {
 			i := st.X + st.Y*boardSize
-			s[i] = st.State
+			s[i] = st.Colour
 		}
 		return s
 	}
@@ -218,7 +218,7 @@ func TestStateReturnsStones(t *testing.T) {
 	testCases := []struct {
 		Desc   string
 		Match  game.Match
-		Expect []game.State
+		Expect []game.Colour
 	}{
 		{
 			Desc:   "One move should result in one stone",
@@ -237,7 +237,7 @@ func TestStateReturnsStones(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		got := test.Match.State()
+		got := test.Match.State().Stones()
 		if len(got) != len(test.Expect) {
 			t.Errorf("%s. Expected '%d' positions, Got: '%d'", test.Desc, len(test.Expect), len(got))
 		}
@@ -254,8 +254,8 @@ type pos struct {
 }
 
 type stone struct {
-	State game.State
-	X, Y  int
+	Colour game.Colour
+	X, Y   int
 }
 
 type mockMove struct{}
