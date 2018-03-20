@@ -48,3 +48,33 @@ func (m Match) Play(player *model.User, x, y int) (Match, error) {
 	m.Board.Moves = append(m.Board.Moves, mv)
 	return m, nil
 }
+
+type State int
+
+const (
+	Empty = State(iota)
+	Black
+	White
+)
+
+func (m Match) State() []State {
+	// TODO state should also return captured stones
+	boardSize := m.Board.Size
+	stones := make([]State, boardSize*boardSize)
+	for _, mv := range m.Board.Moves {
+		switch v := mv.(type) {
+		case PlayStone:
+			i := v.X + v.Y*boardSize
+
+			var pos State
+			if v.player == m.Owner {
+				pos = Black
+			} else {
+				pos = White
+			}
+
+			stones[i] = pos
+		}
+	}
+	return stones
+}
