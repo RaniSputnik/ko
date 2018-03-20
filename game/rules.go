@@ -23,6 +23,14 @@ func theGameMustBeInProgress(m Match, mv Move) error {
 	return nil
 }
 
+func playerMustBeInGame(m Match, mv Move) error {
+	player := mv.Player()
+	if m.Owner != player && m.Opponent != player {
+		return model.ErrNotParticipating{}
+	}
+	return nil
+}
+
 func itMustBeYourTurn(m Match, mv Move) error {
 	if next := m.Next(); next != mv.Player() {
 		return model.ErrNotYourTurn{Next: next}

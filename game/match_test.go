@@ -11,6 +11,7 @@ const TestID = "test123"
 
 var Alice = model.User{ID: "Alice", Username: "testalice"}
 var Bob = model.User{ID: "Bob", Username: "testbob"}
+var Clive = model.User{ID: "Clive", Username: "testclive"}
 
 func TestPlayAddsAMove(t *testing.T) {
 	loggedInUser := &Alice
@@ -268,6 +269,29 @@ func TestCanNotMoveWhenTheGameHasNotStarted(t *testing.T) {
 	/*t.Run("Resign", func(t *testing.T) {
 		_, err := m.Resign(&Alice)
 		expectError(t, model.ErrMatchNotStarted{}, err)
+	})*/
+}
+
+func TestCanNotMoveWhenNotPartOfGame(t *testing.T) {
+	m := game.Match{
+		Owner:    &Alice,
+		Opponent: &Bob,
+		Board:    game.Board{Size: game.BoardSizeNormal},
+	}
+
+	t.Run("Play", func(t *testing.T) {
+		_, err := m.Play(&Clive, 0, 0)
+		expectError(t, model.ErrNotParticipating{}, err)
+	})
+
+	t.Run("Skip", func(t *testing.T) {
+		_, err := m.Skip(&Clive)
+		expectError(t, model.ErrNotParticipating{}, err)
+	})
+
+	/*t.Run("Resign", func(t *testing.T) {
+		_, err := m.Resign(&Clive)
+		expectError(t, model.ErrNotParticipating{}, err)
 	})*/
 }
 

@@ -31,7 +31,7 @@ func (m Match) Next() *model.User {
 }
 
 var (
-	commonRules = rules(theGameMustBeInProgress)
+	commonRules = rules(theGameMustBeInProgress, playerMustBeInGame)
 	playRules   = rules(commonRules, itMustBeYourTurn, moveMustBeInsideBoardSize)
 	skipRules   = rules(commonRules, itMustBeYourTurn)
 )
