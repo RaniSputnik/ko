@@ -249,6 +249,39 @@ func TestStateReturnsStones(t *testing.T) {
 	}
 }
 
+func TestCannotSkipWhenItIsNotYourTurn(t *testing.T) {
+	m := game.Match{
+		Owner:    &Alice,
+		Opponent: &Bob,
+	}
+
+	expected := model.ErrNotYourTurn{Next: &Alice}
+	if _, err := m.Skip(&Bob); err != expected {
+		t.Errorf("Expected: '%v', got: '%v", expected, err)
+	}
+}
+
+func TestSkipChangesTurn(t *testing.T) {
+	m, err := game.Match{
+		Owner:    &Alice,
+		Opponent: &Bob,
+	}.Skip(&Alice)
+
+	if err != nil {
+		t.Errorf("Expected: '<nil>' error when skipping, got: '%v'", err)
+	}
+
+	if next := m.Next(); next != &Bob {
+		t.Errorf("Expected next: '%v', got: '%v'", &Bob, next)
+	}
+
+	m.ColoursReversed = true
+
+	if next := m.Next(); next != &Alice {
+		t.Errorf("Expected next: '%v', got: '%v'", &Alice, next)
+	}
+}
+
 type pos struct {
 	X, Y int
 }

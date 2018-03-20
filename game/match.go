@@ -30,19 +30,31 @@ func (m Match) Next() *model.User {
 	return nextPlayer
 }
 
+var (
+	playRules = rules(itMustBeYourTurn, moveMustBeInsideBoardSize)
+	skipRules = rules(itMustBeYourTurn)
+)
+
 // Play attempts to place a stone from the given player at
 // the given position. Returns an error if the move is illegal.
 func (m Match) Play(player *model.User, x, y int) (Match, error) {
-	playRules := []playRule{
-		itMustBeYourTurn,
-		moveMustBeInsideBoardSize,
+	mv := PlayStone{player, x, y}
+
+	if err := playRules(m, mv); err != nil {
+		return m, err
 	}
 
-	mv := PlayStone{player, x, y}
-	for _, rule := range playRules {
-		if err := rule(m, mv); err != nil {
-			return m, err
-		}
+	m.Board.Moves = append(m.Board.Moves, mv)
+	return m, nil
+}
+
+// Skip changes the given players turn and passes the turn
+// to their opponent.
+func (m Match) Skip(player *model.User) (Match, error) {
+	mv := Skip{player}
+
+	if err := skipRules(m, mv); err != nil {
+		return m, err
 	}
 
 	m.Board.Moves = append(m.Board.Moves, mv)
