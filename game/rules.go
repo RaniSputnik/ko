@@ -15,6 +15,14 @@ func rules(rules ...ruleFunc) ruleFunc {
 	}
 }
 
+func theGameMustBeInProgress(m Match, mv Move) error {
+	if m.Opponent == nil {
+		return model.ErrMatchNotStarted{}
+	}
+	// TODO nobody has resigned and the game is not over
+	return nil
+}
+
 func itMustBeYourTurn(m Match, mv Move) error {
 	if next := m.Next(); next != mv.Player() {
 		return model.ErrNotYourTurn{Next: next}

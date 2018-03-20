@@ -31,8 +31,9 @@ func (m Match) Next() *model.User {
 }
 
 var (
-	playRules = rules(itMustBeYourTurn, moveMustBeInsideBoardSize)
-	skipRules = rules(itMustBeYourTurn)
+	commonRules = rules(theGameMustBeInProgress)
+	playRules   = rules(commonRules, itMustBeYourTurn, moveMustBeInsideBoardSize)
+	skipRules   = rules(commonRules, itMustBeYourTurn)
 )
 
 // Play attempts to place a stone from the given player at

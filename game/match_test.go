@@ -249,16 +249,36 @@ func TestStateReturnsStones(t *testing.T) {
 	}
 }
 
+func TestCanNotMoveWhenTheGameHasNotStarted(t *testing.T) {
+	m := game.Match{
+		Owner: &Alice,
+		Board: game.Board{Size: game.BoardSizeNormal},
+	}
+
+	t.Run("Play", func(t *testing.T) {
+		_, err := m.Play(&Alice, 0, 0)
+		expectError(t, model.ErrMatchNotStarted{}, err)
+	})
+
+	t.Run("Skip", func(t *testing.T) {
+		_, err := m.Skip(&Alice)
+		expectError(t, model.ErrMatchNotStarted{}, err)
+	})
+
+	/*t.Run("Resign", func(t *testing.T) {
+		_, err := m.Resign(&Alice)
+		expectError(t, model.ErrMatchNotStarted{}, err)
+	})*/
+}
+
 func TestCannotSkipWhenItIsNotYourTurn(t *testing.T) {
 	m := game.Match{
 		Owner:    &Alice,
 		Opponent: &Bob,
 	}
 
-	expected := model.ErrNotYourTurn{Next: &Alice}
-	if _, err := m.Skip(&Bob); err != expected {
-		t.Errorf("Expected: '%v', got: '%v", expected, err)
-	}
+	_, err := m.Skip(&Bob)
+	expectError(t, model.ErrNotYourTurn{Next: &Alice}, err)
 }
 
 func TestSkipChangesTurn(t *testing.T) {
@@ -296,3 +316,9 @@ type mockMove struct{}
 func (mv mockMove) String() string { return "A mock move" }
 
 func (mv mockMove) Player() *model.User { return nil }
+
+func expectError(t *testing.T, expected, got error) {
+	if got != expected {
+		t.Errorf("Expected: '%v', got: '%v", expected, got)
+	}
+}
