@@ -178,78 +178,6 @@ func TestOnlyTheNextPlayerCanPlay(t *testing.T) {
 	}
 }
 
-func TestStateReturnsStones(t *testing.T) {
-	boardSize := 9
-
-	matchWithMoves := func(moves ...pos) game.Match {
-		m := game.Match{
-			Owner:    &Alice,
-			Opponent: &Bob,
-			Board: game.Board{
-				Size: boardSize,
-			},
-		}
-
-		for i, mv := range moves {
-			var player *model.User
-			if i%2 == 0 {
-				player = &Alice
-			} else {
-				player = &Bob
-			}
-
-			var err error
-			if m, err = m.Play(player, mv.X, mv.Y); err != nil {
-				t.Fatalf("Failed to setup test: %s", err)
-			}
-		}
-
-		return m
-	}
-
-	state := func(stones ...stone) []game.Colour {
-		s := make([]game.Colour, boardSize*boardSize)
-		for _, st := range stones {
-			i := st.X + st.Y*boardSize
-			s[i] = st.Colour
-		}
-		return s
-	}
-
-	testCases := []struct {
-		Desc   string
-		Match  game.Match
-		Expect []game.Colour
-	}{
-		{
-			Desc:   "One move should result in one stone",
-			Match:  matchWithMoves(pos{0, 0}),
-			Expect: state(stone{game.Black, 0, 0}),
-		},
-		{
-			Desc:  "Three stones should be alternating in colour",
-			Match: matchWithMoves(pos{0, 0}, pos{1, 2}, pos{5, 4}),
-			Expect: state(
-				stone{game.Black, 0, 0},
-				stone{game.White, 1, 2},
-				stone{game.Black, 5, 4},
-			),
-		},
-	}
-
-	for _, test := range testCases {
-		got := test.Match.State().Stones()
-		if len(got) != len(test.Expect) {
-			t.Errorf("%s. Expected '%d' positions, Got: '%d'", test.Desc, len(test.Expect), len(got))
-		}
-		for i, gotStone := range got {
-			if gotStone != test.Expect[i] {
-				t.Errorf("%s. Expected stone '%d' to be: %v, Got: %v", test.Desc, i+1, test.Expect, got)
-			}
-		}
-	}
-}
-
 func TestCanNotMoveWhenTheGameHasNotStarted(t *testing.T) {
 	m := game.Match{
 		Owner: &Alice,
@@ -288,11 +216,6 @@ func TestCanNotMoveWhenNotPartOfGame(t *testing.T) {
 		_, err := m.Skip(&Clive)
 		expectError(t, model.ErrNotParticipating{}, err)
 	})
-
-	/*t.Run("Resign", func(t *testing.T) {
-		_, err := m.Resign(&Clive)
-		expectError(t, model.ErrNotParticipating{}, err)
-	})*/
 }
 
 func TestCannotSkipWhenItIsNotYourTurn(t *testing.T) {
