@@ -218,6 +218,27 @@ func TestCanNotMoveWhenNotPartOfGame(t *testing.T) {
 	})
 }
 
+func TestCanNotPlayInAnOccupiedPosition(t *testing.T) {
+	mockMatch := game.Match{
+		Owner:    &Alice,
+		Opponent: &Bob,
+		Board:    game.Board{Size: game.BoardSizeNormal},
+	}
+
+	t.Run("OwnStone", func(t *testing.T) {
+		m, _ := mockMatch.Play(&Alice, 0, 0)
+		m, _ = m.Play(&Bob, 1, 1)
+		_, err := m.Play(&Alice, 0, 0)
+		expectError(t, model.ErrPositionOccupied{}, err)
+	})
+
+	t.Run("OpponentsStone", func(t *testing.T) {
+		m, _ := mockMatch.Play(&Alice, 0, 0)
+		_, err := m.Play(&Bob, 0, 0)
+		expectError(t, model.ErrPositionOccupied{}, err)
+	})
+}
+
 func TestCannotSkipWhenItIsNotYourTurn(t *testing.T) {
 	m := game.Match{
 		Owner:    &Alice,

@@ -93,3 +93,13 @@ func (e ErrNotYourTurn) Error() string {
 	}
 	return fmt.Sprintf("It is not your turn, %s will play next.", e.Next.Username)
 }
+
+type ErrPositionOccupied struct{}
+
+func (ErrPositionOccupied) Type() string {
+	return "PositionOccupied"
+}
+
+func (e ErrPositionOccupied) Error() string {
+	return "That position is already occupied."
+}
