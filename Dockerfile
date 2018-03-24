@@ -10,11 +10,17 @@ WORKDIR /go/src/github.com/RaniSputnik/ko
 COPY Gopkg.toml Gopkg.lock ./
 RUN dep ensure -vendor-only
 
-# TODO split container and builder
-# so that we don't need go installed
+# Build the binary
 COPY . .
-RUN go install -v .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ko .
+
+FROM scratch
+# TODO copy root CA's if needed
+
+# Copy binary
+WORKDIR /root/
+COPY --from=0 /go/src/github.com/RaniSputnik/ko/ko .
 
 # Run the API
 EXPOSE 8080
-CMD ["ko"]
+CMD ["./ko"]
