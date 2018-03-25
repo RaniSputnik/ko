@@ -1,92 +1,64 @@
 package game
 
-import "log"
-
-func recalculateLiberties(stones []Colour, boardSize int, x, y int) (result []Colour, captured int) {
-	log.Printf("recalculateLiberties::boardSize=%d,x=%d,y=%d", boardSize, x, y)
-	result = stones
-
-	i := boardIndex(boardSize, x, y)
-	col := stones[i]
-	if col == None {
-		return
-	}
-	var captureCol Colour
-	if col == Black {
-		captureCol = White
-	} else {
-		captureCol = Black
-	}
-
-	neighbours := getNeighbours(x, y)
-	for _, n := range neighbours {
-		if !hasAtLeastOneLiberty(result, boardSize, n.x, n.y) {
-			result, captured = captureRegion(result, captureCol, boardSize, n.x, n.y)
-		}
-	}
-
-	return
+type group struct {
+	Colour    Colour
+	Positions []int
+	Liberties int
 }
 
-func hasAtLeastOneLiberty(stones []Colour, boardSize int, x, y int) bool {
-	log.Printf("hasAtLeastOneLiberty::boardSize=%d,x=%d,y=%d", boardSize, x, y)
-	liberyFound, noLibertyFound := true, false
+func (g group) Contains(i int) bool {
+	// TODO this lookup needs to be fast
+	// maybe we could order positions
+	// or lookup by index
+	for p := 0; p < len(g.Positions); p++ {
+		if g.Positions[p] == i {
+			return true
+		}
+	}
+	return false
+}
 
-	// TODO does this need to live here?
-	// we probably already know that x/y is within the board boundaries
+func findGroup(stones []Colour, boardSize, x, y int) group {
 	if !insideBoard(boardSize, x, y) {
-		return liberyFound // TODO should this be an error
+		return group{Colour: None}
 	}
-
 	i := boardIndex(boardSize, x, y)
 	col := stones[i]
 	if col == None {
-		return liberyFound
+		return group{Colour: None}
 	}
-
-	neighbours := getNeighbours(x, y)
-	for _, n := range neighbours {
-		if !insideBoard(boardSize, n.x, n.y) {
-			continue
-		}
-
-		i := n.x + n.y*boardSize
-		if ncol := stones[i]; ncol == None {
-			return liberyFound
-		} else if ncol != col {
-			continue // No liberty here
-		}
-
-		if hasAtLeastOneLiberty(stones, boardSize, n.x, n.y) {
-			return liberyFound
-		}
-	}
-
-	return noLibertyFound
+	g := group{Colour: col, Positions: []int{i}}
+	g = walkGroup(stones, g, boardSize, x, y)
+	return g
 }
 
-func captureRegion(stones []Colour, colour Colour, boardSize int, x, y int) (result []Colour, captured int) {
-	log.Printf("captureRegion::colour=%s,boardSize=%d,x=%d,y=%d", colour, boardSize, x, y)
-	result = stones
-
-	if i := boardIndex(boardSize, x, y); result[i] != None {
-		result[i] = None
-		captured++
-	}
-
+func walkGroup(stones []Colour, g group, boardSize, x, y int) group {
 	neighbours := getNeighbours(x, y)
 	for _, n := range neighbours {
 		if !insideBoard(boardSize, n.x, n.y) {
 			continue
 		}
 
-		i := boardIndex(boardSize, n.x, n.y)
-		if result[i] == colour {
-			result[i] = None
-			captured++
+		ni := boardIndex(boardSize, n.x, n.y)
+		if g.Contains(ni) {
+			continue // We've already walked this cell
+		}
+
+		switch stones[ni] {
+		case None:
+			g.Liberties++
+		case g.Colour:
+			g.Positions = append(g.Positions, ni)
+			g = walkGroup(stones, g, boardSize, n.x, n.y)
+		default:
+			// This is an opponents stone
+			// Don't increment liberties
+			// and don't walk the group
+			// any further
 		}
 	}
-	return
+
+	return g
 }
 
 func insideBoard(boardSize, x, y int) bool {
