@@ -7,6 +7,25 @@ import (
 	"github.com/RaniSputnik/ko/model"
 )
 
+func TestStateColourString(t *testing.T) {
+	testCases := []struct {
+		Test   game.Colour
+		Expect string
+	}{
+		{Test: game.Black, Expect: "Black"},
+		{Test: game.White, Expect: "White"},
+		{Test: game.None, Expect: "None"},
+		{Test: game.Colour(4), Expect: "Colour(4)"},
+		{Test: game.Colour(7), Expect: "Colour(7)"},
+	}
+
+	for _, test := range testCases {
+		if got := test.Test.String(); got != test.Expect {
+			t.Errorf("Expected: %s, Got: %s", test.Expect, got)
+		}
+	}
+}
+
 func TestStateReturnsStones(t *testing.T) {
 	boardSize := 9
 
