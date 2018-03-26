@@ -63,22 +63,21 @@ func TestStateReturnsStones(t *testing.T) {
 	}
 }
 
-func TestAStoneWithoutLibertiesIsCaptured(t *testing.T) {
+func TestStonesWithoutLibertiesAreCaptured(t *testing.T) {
 	boardSize := 9
 
 	testCases := []struct {
-		Name               string
-		Match              game.Match
-		CaptureX, CaptureY int
-		BlackPrisoners     int
-		WhitePrisoners     int
+		Name           string
+		Match          game.Match
+		Captures       []pos
+		BlackPrisoners int
+		WhitePrisoners int
 	}{
 		{
 			Name: "FullSurround",
 			Match: matchWithMoves(game.BoardSizeTiny,
 				pos{2, 2}, pos{3, 2}, pos{3, 3}, pos{8, 8}, pos{4, 2}, pos{8, 7}, pos{3, 1}),
-			CaptureX:       3,
-			CaptureY:       2,
+			Captures:       []pos{pos{3, 2}},
 			BlackPrisoners: 0,
 			WhitePrisoners: 1,
 		},
@@ -86,8 +85,7 @@ func TestAStoneWithoutLibertiesIsCaptured(t *testing.T) {
 			Name: "TopLeftCorner",
 			Match: matchWithMoves(game.BoardSizeTiny,
 				pos{0, 0}, pos{1, 0}, pos{8, 8}, pos{0, 1}),
-			CaptureX:       0,
-			CaptureY:       0,
+			Captures:       []pos{pos{0, 0}},
 			BlackPrisoners: 1,
 			WhitePrisoners: 0,
 		},
@@ -95,8 +93,7 @@ func TestAStoneWithoutLibertiesIsCaptured(t *testing.T) {
 			Name: "BottomRightCorner",
 			Match: matchWithMoves(game.BoardSizeTiny,
 				pos{8, 8}, pos{7, 8}, pos{0, 0}, pos{8, 7}),
-			CaptureX:       8,
-			CaptureY:       8,
+			Captures:       []pos{pos{8, 8}},
 			BlackPrisoners: 1,
 			WhitePrisoners: 0,
 		},
@@ -104,11 +101,32 @@ func TestAStoneWithoutLibertiesIsCaptured(t *testing.T) {
 			Name: "RightHandSide",
 			Match: matchWithMoves(game.BoardSizeTiny,
 				pos{8, 3}, pos{8, 4}, pos{7, 4}, pos{8, 8}, pos{8, 5}),
-			CaptureX:       8,
-			CaptureY:       4,
+			Captures:       []pos{pos{8, 4}},
 			BlackPrisoners: 0,
 			WhitePrisoners: 1,
 		},
+		{
+			Name: "SurroundedGroup",
+			Match: matchWithMoves(game.BoardSizeTiny,
+				pos{3, 6}, pos{3, 5}, pos{2, 5}, pos{3, 4}, pos{4, 5},
+				pos{4, 4}, pos{2, 4}, pos{4, 3}, pos{3, 3}, pos{8, 8},
+				pos{5, 3}, pos{8, 7}, pos{5, 4}, pos{8, 6}, pos{4, 2},
+			),
+			Captures:       []pos{pos{3, 4}, pos{3, 5}, pos{4, 3}, pos{4, 4}},
+			BlackPrisoners: 0,
+			WhitePrisoners: 4,
+		},
+		{
+			Name: "GroupAgainstWall",
+			Match: matchWithMoves(game.BoardSizeTiny,
+				pos{0, 6}, pos{0, 5}, pos{1, 5}, pos{0, 4}, pos{1, 3},
+				pos{1, 4}, pos{0, 2}, pos{0, 3}, pos{2, 4},
+			),
+			Captures:       []pos{pos{0, 5}, pos{0, 4}, pos{1, 4}, pos{0, 3}},
+			BlackPrisoners: 0,
+			WhitePrisoners: 4,
+		},
+		// TODO test donut group
 	}
 
 	for i, test := range testCases {
@@ -118,10 +136,12 @@ func TestAStoneWithoutLibertiesIsCaptured(t *testing.T) {
 			t.Logf("Test case #%d: %s", i+1, state)
 
 			// TODO use a helper method instead
-			index := test.CaptureX + test.CaptureY*boardSize
-			if got := stones[index]; got != game.None {
-				t.Errorf("Expected stone at %d,%d to have been captured.",
-					test.CaptureX, test.CaptureY)
+			for _, capture := range test.Captures {
+				index := capture.X + capture.Y*boardSize
+				if got := stones[index]; got != game.None {
+					t.Errorf("Expected stone at %d,%d to have been captured.",
+						capture.X, capture.Y)
+				}
 			}
 
 			if got := state.Prisoners(game.Black); got != test.BlackPrisoners {
@@ -162,7 +182,6 @@ func matchWithMoves(boardSize int, moves ...pos) game.Match {
 
 		var err error
 		if m, err = m.Play(player, mv.X, mv.Y); err != nil {
-			//t.Fatalf("Failed to setup test: %s", err)
 			panic(err)
 		}
 	}
