@@ -70,21 +70,50 @@ func newState(m Match) State {
 			i := v.X + v.Y*boardSize
 
 			// TODO respect 'ColoursReversed' property
-			var pos Colour
+			var playerCol Colour
 			if v.player == m.Owner {
-				pos = Black
+				playerCol = Black
 			} else {
-				pos = White
+				playerCol = White
 			}
-			stones[i] = pos
+			stones[i] = playerCol
 
-			var captured int
-			stones, captured = recalculateLiberties(stones, boardSize, v.X, v.Y)
-			if pos == Black {
-				whitePrisoners += captured
-			} else {
-				blackPrisoners += captured
+			// TODO we will walk the same groups multiple
+			// times if we play next to a stone of ours
+			// find a way to avoid walking more than once
+
+			walk := [5]pos{
+				pos{v.X, v.Y},
+				pos{v.X - 1, v.Y},
+				pos{v.X, v.Y - 1},
+				pos{v.X + 1, v.Y},
+				pos{v.X, v.Y + 1},
 			}
+
+			groups := [5]group{}
+			for i := 0; i < len(walk); i++ {
+				groups[i] = findGroup(stones, boardSize, walk[i].x, walk[i].y)
+			}
+
+			for _, g := range groups {
+				groupSize := len(g.Positions)
+				if groupSize == 0 {
+					continue
+				}
+
+				if g.Liberties == 0 {
+					if playerCol == Black {
+						whitePrisoners += groupSize
+					} else {
+						blackPrisoners += groupSize
+					}
+
+					for _, i := range g.Positions {
+						stones[i] = None // Capture
+					}
+				}
+			}
+
 		}
 	}
 
