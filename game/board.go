@@ -8,5 +8,5 @@ const (
 
 type Board struct {
 	Size  int
-	Moves []Move
+	Moves []Action
 }

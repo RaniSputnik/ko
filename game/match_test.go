@@ -22,7 +22,7 @@ func TestPlayAddsAMove(t *testing.T) {
 		Opponent: &Bob,
 		Board: game.Board{
 			Size:  game.BoardSizeNormal,
-			Moves: []game.Move{},
+			Moves: []game.Action{},
 		},
 	}
 
@@ -77,8 +77,8 @@ func TestCanNotPlayOutOfBounds(t *testing.T) {
 }
 
 func TestNextReturnsNextUsersTurn(t *testing.T) {
-	genMoves := func(n int) []game.Move {
-		moves := make([]game.Move, n)
+	genMoves := func(n int) []game.Action {
+		moves := make([]game.Action, n)
 		for i := 0; i < n; i++ {
 			moves[i] = mockMove{}
 		}
@@ -283,7 +283,7 @@ type mockMove struct{}
 
 func (mv mockMove) String() string { return "A mock move" }
 
-func (mv mockMove) Player() *model.User { return nil }
+func (mv mockMove) Actor() *model.User { return nil }
 
 func expectError(t *testing.T, expected, got error) {
 	if got != expected {

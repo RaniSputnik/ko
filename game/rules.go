@@ -4,12 +4,12 @@ import (
 	"github.com/RaniSputnik/ko/model"
 )
 
-type ruleFunc func(m Match, mv Move) error
+type ruleFunc func(m Match, mv Action) error
 
 func rules(rules ...ruleFunc) ruleFunc {
 	// No rules? Do nothing
 	if len(rules) == 0 {
-		return func(m Match, mv Move) error { return nil }
+		return func(m Match, mv Action) error { return nil }
 	}
 
 	// Only one rule, then return just that rule
@@ -19,7 +19,7 @@ func rules(rules ...ruleFunc) ruleFunc {
 
 	// Otherwise a func that runs all the rules
 	// returning as soon as an error is encountered
-	return func(m Match, mv Move) error {
+	return func(m Match, mv Action) error {
 		for _, rule := range rules {
 			if err := rule(m, mv); err != nil {
 				return err
@@ -29,7 +29,7 @@ func rules(rules ...ruleFunc) ruleFunc {
 	}
 }
 
-func theGameMustBeInProgress(m Match, mv Move) error {
+func theGameMustBeInProgress(m Match, mv Action) error {
 	if m.Opponent == nil {
 		return model.ErrMatchNotStarted{}
 	}
@@ -37,22 +37,22 @@ func theGameMustBeInProgress(m Match, mv Move) error {
 	return nil
 }
 
-func playerMustBeInGame(m Match, mv Move) error {
-	player := mv.Player()
+func playerMustBeInGame(m Match, mv Action) error {
+	player := mv.Actor()
 	if m.Owner != player && m.Opponent != player {
 		return model.ErrNotParticipating{}
 	}
 	return nil
 }
 
-func itMustBeYourTurn(m Match, mv Move) error {
-	if next := m.Next(); next != mv.Player() {
+func itMustBeYourTurn(m Match, mv Action) error {
+	if next := m.Next(); next != mv.Actor() {
 		return model.ErrNotYourTurn{Next: next}
 	}
 	return nil
 }
 
-func moveMustBeInsideBoardSize(m Match, mv Move) error {
+func moveMustBeInsideBoardSize(m Match, mv Action) error {
 	ps := mv.(PlayStone)
 
 	boardSize := m.Board.Size
@@ -66,7 +66,7 @@ func moveMustBeInsideBoardSize(m Match, mv Move) error {
 	return nil
 }
 
-func positionMustNotBeOccupied(m Match, mv Move) error {
+func positionMustNotBeOccupied(m Match, mv Action) error {
 	// TODO pass this to rule func? If many rules need this
 	// will be inefficient to recalculate it each time
 	state := m.State()
